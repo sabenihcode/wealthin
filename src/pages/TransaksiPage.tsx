@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Search, SlidersHorizontal, Inbox } from 'lucide-react'
+import { Search, Inbox } from 'lucide-react'
 import { useTransactions } from '../hooks/useTransactions'
 import { TransactionItem } from '../components/cards/TransactionItem'
 import { formatIDR } from '../utils/formatters'
