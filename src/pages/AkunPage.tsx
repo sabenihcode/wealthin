@@ -1,5 +1,5 @@
 import {
-  ChevronRight, CreditCard, Tag, BarChart2, Calendar,
+  ChevronRight, CreditCard, Tag, Calendar,
   Download, Upload, KeyRound, Eye, EyeOff
 } from 'lucide-react'
 import { useRef, useState } from 'react'
