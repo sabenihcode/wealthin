@@ -5,7 +5,7 @@ import { useTransactions } from '../../hooks/useTransactions'
 import { getAiInsight } from '../../utils/gemini'
 
 export function AiAssistant(): JSX.Element {
-  const { geminiApiKey, setActiveTab, showToast } = useApp()
+  const { geminiApiKey, setActiveTab } = useApp()
   const { transactions, ...summary } = useTransactions()
 
   const [isOpen, setIsOpen]     = useState(false)
