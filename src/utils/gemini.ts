@@ -25,7 +25,7 @@ Berikut data keuangan pengguna bulan ini:
 - Saldo Bersih: Rp ${summary.saldoBersih.toLocaleString('id-ID')}
 - Pengeluaran per Kategori:
 ${Object.entries(summary.categorySpending)
-  .map(([cat, amt]) => `  • ${cat}: Rp ${amt.toLocaleString('id-ID')}`)
+  .map(([cat, amt]: [string, number]) => `  • ${cat}: Rp ${amt.toLocaleString('id-ID')}`)
   .join('\n')}
 
 Tugasmu:
