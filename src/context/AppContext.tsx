@@ -107,7 +107,7 @@ export function AppProvider({ children }: AppProviderProps) {
   const [budget, setBudget]                 = useState<number>(DEFAULT_BUDGET)
 
   // ── Toast ───────────────────────────────────────────────────────────
-  const [toast, setToast] = useState<ToastState({
+  const [toast, setToast] = useState<ToastState>({
     visible: false,
     message: '',
   })
