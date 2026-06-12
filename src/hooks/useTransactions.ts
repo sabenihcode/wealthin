@@ -1,55 +1,45 @@
 import { useMemo } from 'react'
 import { useApp } from '../context/AppContext'
-import {
-  BASE_PEMASUKAN,
-  BASE_PENGELUARAN,
-  BASE_CATEGORY_SPENDING,
-} from '../constants/mockData'
-import type {
-  CategoryName,
-  CategorySpending,
-  FinancialSummary,
-  Transaction,
-} from '../types'
+import { BASE_CATEGORY_SPENDING } from '../constants/mockData'
+import type { CategoryName, CategorySpending, Transaction } from '../types'
 
-export function useTransactions(): FinancialSummary {
-  const { transactions } = useApp()
+export function useTransactions() {
+  const { transactions, addTransaction, deleteTransaction } = useApp()
 
-  return useMemo<FinancialSummary>(() => {
+  const summary = useMemo(() => {
     const totalPemasukan = transactions
       .filter((t: Transaction) => t.type === 'pemasukan')
-      .reduce((sum: number, t: Transaction) => sum + t.amount, 0)
+      .reduce((s: number, t: Transaction) => s + t.amount, 0)
 
     const totalPengeluaran = transactions
       .filter((t: Transaction) => t.type === 'pengeluaran')
-      .reduce((sum: number, t: Transaction) => sum + t.amount, 0)
+      .reduce((s: number, t: Transaction) => s + t.amount, 0)
 
     const saldoBersih = totalPemasukan - totalPengeluaran
 
-    // Hitung dari transaksi, fallback ke base jika kosong
-    const categorySpending: CategorySpending =
-      transactions.length > 0
-        ? transactions
-            .filter((t: Transaction) => t.type === 'pengeluaran')
-            .reduce<CategorySpending>((acc, t) => {
-              const cat = t.category as CategoryName
-              acc[cat] = (acc[cat] ?? 0) + t.amount
-              return acc
-            }, {})
-        : BASE_CATEGORY_SPENDING
+    // Clone object agar tidak mutasi data asli
+    const categorySpending: CategorySpending = { ...BASE_CATEGORY_SPENDING }
 
-    const totalKategori = Object.values(categorySpending).reduce(
-      (sum: number, v: number) => sum + v,
-      0
-    )
+    transactions.forEach((t: Transaction) => {
+      if (t.type === 'pengeluaran') {
+        const cat = (t.category || 'Lainnya') as CategoryName
+        if (cat in categorySpending) {
+          categorySpending[cat] += t.amount
+        } else {
+          categorySpending['Lainnya'] += t.amount
+        }
+      }
+    })
 
-    return {
-      transactions,
-      totalPemasukan:  totalPemasukan  || BASE_PEMASUKAN,
-      totalPengeluaran: totalPengeluaran || BASE_PENGELUARAN,
-      saldoBersih,
-      categorySpending,
-      totalKategori,
-    }
+    const totalKategori = Object.values(categorySpending).reduce((a: number, b: number) => a + b, 0)
+
+    return { totalPemasukan, totalPengeluaran, saldoBersih, categorySpending, totalKategori }
   }, [transactions])
+
+  return {
+    transactions,
+    addTransaction,
+    deleteTransaction,
+    ...summary
+  }
 }
