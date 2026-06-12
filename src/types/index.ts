@@ -75,6 +75,15 @@ export interface ToastState {
   message: string
 }
 
+// ── Summary finansial ─────────────────────────────────────────────────
+export interface FinancialSummary {
+  totalPemasukan:  number
+  totalPengeluaran: number
+  saldoBersih:     number
+  categorySpending: CategorySpending
+  totalKategori:   number
+}
+
 // ── Context ───────────────────────────────────────────────────────────
 export interface AppContextValue {
   // data transaksi
