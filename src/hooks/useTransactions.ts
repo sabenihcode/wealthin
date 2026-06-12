@@ -6,67 +6,50 @@ import {
   BASE_CATEGORY_SPENDING,
 } from '../constants/mockData'
 import type {
-  Transaction,
-  FinancialSummary,
-  CategorySpending,
   CategoryName,
+  CategorySpending,
+  FinancialSummary,
+  Transaction,
 } from '../types'
 
-interface UseTransactionsReturn extends FinancialSummary {
-  transactions:      Transaction[]
-  addTransaction:    (tx: Transaction) => void
-  deleteTransaction: (id: string) => void
-}
+export function useTransactions(): FinancialSummary {
+  const { transactions } = useApp()
 
-export function useTransactions(): UseTransactionsReturn {
-  const { transactions, addTransaction, deleteTransaction } = useApp()
+  return useMemo<FinancialSummary>(() => {
+    const totalPemasukan = transactions
+      .filter((t: Transaction) => t.type === 'pemasukan')
+      .reduce((sum: number, t: Transaction) => sum + t.amount, 0)
 
-  const summary = useMemo<FinancialSummary>(() => {
-    const totalPemasukan =
-      BASE_PEMASUKAN +
-      transactions
-        .filter(t => t.type === 'pemasukan')
-        .reduce((s, t) => s + t.amount, 0)
-
-    const totalPengeluaran =
-      BASE_PENGELUARAN +
-      transactions
-        .filter(t => t.type === 'pengeluaran')
-        .reduce((s, t) => s + t.amount, 0)
+    const totalPengeluaran = transactions
+      .filter((t: Transaction) => t.type === 'pengeluaran')
+      .reduce((sum: number, t: Transaction) => sum + t.amount, 0)
 
     const saldoBersih = totalPemasukan - totalPengeluaran
 
-    // Deep copy agar BASE tidak termutasi
-    const categorySpending: CategorySpending = {
-      ...BASE_CATEGORY_SPENDING,
-    }
+    // Hitung dari transaksi, fallback ke base jika kosong
+    const categorySpending: CategorySpending =
+      transactions.length > 0
+        ? transactions
+            .filter((t: Transaction) => t.type === 'pengeluaran')
+            .reduce<CategorySpending>((acc, t) => {
+              const cat = t.category as CategoryName
+              acc[cat] = (acc[cat] ?? 0) + t.amount
+              return acc
+            }, {})
+        : BASE_CATEGORY_SPENDING
 
-    transactions.forEach(t => {
-      if (t.type !== 'pengeluaran') return
-      const cat = (t.category ?? 'Lainnya') as CategoryName
-      if (cat in categorySpending) {
-        categorySpending[cat] += t.amount
-      } else {
-        categorySpending['Lainnya'] += t.amount
-      }
-    })
-
-    const totalKategori = Object.values(categorySpending)
-      .reduce((a, b) => a + b, 0)
+    const totalKategori = Object.values(categorySpending).reduce(
+      (sum: number, v: number) => sum + v,
+      0
+    )
 
     return {
-      totalPemasukan,
-      totalPengeluaran,
+      transactions,
+      totalPemasukan:  totalPemasukan  || BASE_PEMASUKAN,
+      totalPengeluaran: totalPengeluaran || BASE_PENGELUARAN,
       saldoBersih,
       categorySpending,
       totalKategori,
     }
   }, [transactions])
-
-  return {
-    transactions,
-    addTransaction,
-    deleteTransaction,
-    ...summary,
-  }
 }
