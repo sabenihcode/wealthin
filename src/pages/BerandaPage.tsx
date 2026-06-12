@@ -1,20 +1,25 @@
-import { Bell, ChevronRight } from 'lucide-react'
+import { useState } from 'react'
+import { Bell, ChevronRight, Plus, Target } from 'lucide-react'
 import { useApp } from '../context/AppContext'
 import { useTransactions } from '../hooks/useTransactions'
 import { formatIDR } from '../utils/formatters'
 import { CATEGORIES_CONFIG } from '../constants/categories'
 import { BalanceCard } from '../components/cards/BalanceCard'
 import { TransactionItem } from '../components/cards/TransactionItem'
+import { GoalCard } from '../components/goals/GoalCard'
+import { AddGoalSheet } from '../components/goals/AddGoalSheet'
 import type { CategoryName } from '../types'
 
 export function BerandaPage(): JSX.Element {
-  // ── Context hooks (PISAH: useApp untuk UI, useTransactions untuk data) ──
+  // Ambil userName dari useApp
   const {
     openModal,
     setActiveTab,
     setAnalisisSubTab,
     hideBalance,
     showToast,
+    goals,
+    userName,
   } = useApp()
 
   const {
@@ -26,19 +31,18 @@ export function BerandaPage(): JSX.Element {
     totalKategori,
   } = useTransactions()
 
-  // ── Derived values ──
+  const [showAddGoal, setShowAddGoal] = useState<boolean>(false)
+
   const cashflowTotal = totalPemasukan + totalPengeluaran
 
   return (
     <div className="animate-fade-in space-y-5 pt-6">
 
-      {/* ════════════════════════════════════════════════════════
-          SEKSI 1: HEADER
-          ════════════════════════════════════════════════════════ */}
+      {/* SEKSI 1: HEADER */}
       <div className="flex justify-between items-center mt-2">
         <div>
           <span className="text-slate-500 text-xs flex items-center gap-1 font-semibold">
-            Halo, Sabenih 👋
+            Halo, {userName} 👋
           </span>
           <h1 className="text-3xl font-extrabold text-white tracking-tight">
             Dashboard
@@ -57,14 +61,50 @@ export function BerandaPage(): JSX.Element {
         </button>
       </div>
 
-      {/* ════════════════════════════════════════════════════════
-          SEKSI 2: SALDO BERSIH
-          ════════════════════════════════════════════════════════ */}
+      {/* SEKSI 2: SALDO BERSIH */}
       <BalanceCard />
 
-      {/* ════════════════════════════════════════════════════════
-          SEKSI 3: PEMASUKAN VS PENGELUARAN
-          ════════════════════════════════════════════════════════ */}
+      {/* SEKSI 3: SAVING GOALS */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <Target className="w-4 h-4 text-fuchsia-400" />
+            <h3 className="text-xs font-extrabold text-slate-400 uppercase tracking-widest">
+              Target Nabung
+            </h3>
+          </div>
+          <button
+            onClick={() => setShowAddGoal(true)}
+            className="flex items-center gap-1 bg-fuchsia-500/10
+                       text-fuchsia-400 text-[10px] font-extrabold
+                       px-3 py-1.5 rounded-full hover:bg-fuchsia-500/20
+                       transition-colors"
+          >
+            <Plus className="w-3 h-3" /> Baru
+          </button>
+        </div>
+
+        {goals.length === 0 ? (
+          <div className="bg-slate-900 border border-slate-800 border-dashed
+                          rounded-3xl p-8 text-center">
+            <p className="text-2xl mb-2">🎯</p>
+            <p className="text-xs text-slate-500 font-bold">
+              Belum ada target nabung
+            </p>
+            <p className="text-[10px] text-slate-600 font-medium mt-1">
+              Buat target pertamamu!
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {goals.map(g => (
+              <GoalCard key={g.id} goal={g} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* SEKSI 4: PEMASUKAN VS PENGELUARAN */}
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5
                       shadow-lg shadow-black/10 space-y-4">
         <h3 className="text-xs font-extrabold text-white">
@@ -101,7 +141,6 @@ export function BerandaPage(): JSX.Element {
           ))}
         </div>
 
-        {/* Progress bar */}
         <div className="relative h-2 bg-slate-800 rounded-full
                         overflow-hidden flex">
           <div
@@ -136,9 +175,7 @@ export function BerandaPage(): JSX.Element {
         </div>
       </div>
 
-      {/* ════════════════════════════════════════════════════════
-          SEKSI 5: KATEGORI PENGELUARAN
-          ════════════════════════════════════════════════════════ */}
+      {/* SEKSI 5: KATEGORI PENGELUARAN */}
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5
                       shadow-lg shadow-black/10 space-y-4">
         <div className="flex justify-between items-center">
@@ -200,9 +237,7 @@ export function BerandaPage(): JSX.Element {
         </div>
       </div>
 
-      {/* ════════════════════════════════════════════════════════
-          SEKSI 6: TRANSAKSI TERBARU
-          ════════════════════════════════════════════════════════ */}
+      {/* SEKSI 6: TRANSAKSI TERBARU */}
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5
                       shadow-lg shadow-black/10 space-y-4">
         <div className="flex justify-between items-center">
@@ -211,7 +246,7 @@ export function BerandaPage(): JSX.Element {
           </h3>
           <button
             onClick={() => {
-              setActiveTab('analisis')
+              setActiveTab('transaksi')
               showToast('Menampilkan semua transaksi!')
             }}
             className="text-blue-400 text-xs font-extrabold
@@ -239,6 +274,11 @@ export function BerandaPage(): JSX.Element {
           </div>
         )}
       </div>
+
+      {/* MODAL: TAMBAH GOAL */}
+      {showAddGoal && (
+        <AddGoalSheet onClose={() => setShowAddGoal(false)} />
+      )}
 
     </div>
   )
