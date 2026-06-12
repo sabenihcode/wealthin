@@ -1,120 +1,59 @@
-import { formatIDR } from '../../utils/formatters'
 import { MONTHLY_TRENDS } from '../../constants/mockData'
-import type { GridLine } from '../../types'
+import type { MonthlyTrend } from '../../types'
 
 interface BarTrendChartProps {
   triggered: boolean
 }
 
-const MAX_VALUE = 15_000_000
+export function BarTrendChart({ triggered }: BarTrendChartProps): JSX.Element {
+  const maxVal = Math.max(
+    ...MONTHLY_TRENDS.flatMap((t: MonthlyTrend) => [t.inflow, t.outflow]),
+    1
+  )
 
-const GRID_LINES: GridLine[] = [
-  { top: 0,  label: 'Rp 12jt' },
-  { top: 48, label: 'Rp 6jt'  },
-  { top: 96, label: 'Rp 0'    },
-]
-
-export function BarTrendChart(
-  { triggered }: BarTrendChartProps
-): JSX.Element {
   return (
-    <div className="grid grid-cols-3 gap-4">
-      {/* Bar chart */}
-      <div className="col-span-2 h-44 flex items-end
-                      justify-between relative
-                      border-b border-slate-100 pb-1">
-        {/* Grid lines */}
-        {GRID_LINES.map(({ top, label }) => (
-          <div
-            key={label}
-            className="absolute left-0 right-0 border-t
-                       border-dashed border-slate-100
-                       text-[8px] text-slate-400 font-bold pt-1"
-            style={{ top }}
-          >
-            {label}
-          </div>
-        ))}
+    <div className="space-y-3">
+      {MONTHLY_TRENDS.map((trend: MonthlyTrend, idx: number) => {
+        const inPct  = (trend.inflow  / maxVal) * 100
+        const outPct = (trend.outflow / maxVal) * 100
 
-        {/* Bars */}
-        {MONTHLY_TRENDS.map((trend, idx) => {
-          const inH  = (trend.inflow  / MAX_VALUE) * 110
-          const outH = (trend.outflow / MAX_VALUE) * 110
+        return (
+          <div key={trend.label} className="space-y-1.5">
+            <div className="flex justify-between items-center">
+              <span className="text-[10px] text-slate-500 font-bold">
+                {trend.label}
+              </span>
+              {idx === MONTHLY_TRENDS.length - 1 && (
+                <span className="text-[9px] text-fuchsia-400 font-bold">
+                  Sekarang
+                </span>
+              )}
+            </div>
 
-          return (
-            <div
-              key={idx}
-              className="flex flex-col items-center flex-1
-                         group relative z-10"
-            >
-              <div className="flex gap-1 items-end h-32 mb-1.5">
-                {/* Inflow */}
+            {/* Inflow bar */}
+            <div className="flex items-center gap-2">
+              <span className="text-[9px] text-emerald-400 font-bold w-6">↑</span>
+              <div className="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
                 <div
-                  className="w-1.5 bg-emerald-500 rounded-full
-                             origin-bottom"
-                  title={`Pemasukan: ${formatIDR(trend.inflow)}`}
-                  style={{
-                    height:     triggered ? `${inH}px` : '0px',
-                    transition: `height 800ms ease-out ${idx * 100}ms`,
-                  }}
-                />
-                {/* Outflow */}
-                <div
-                  className="w-1.5 bg-blue-600 rounded-full
-                             origin-bottom"
-                  title={`Pengeluaran: ${formatIDR(trend.outflow)}`}
-                  style={{
-                    height:     triggered ? `${outH}px` : '0px',
-                    transition: `height 800ms ease-out ${idx * 120}ms`,
-                  }}
+                  className="h-full bg-emerald-500 rounded-full transition-all duration-700"
+                  style={{ width: triggered ? `${inPct}%` : '0%' }}
                 />
               </div>
-              <span className="text-[8px] font-extrabold
-                               text-slate-400 truncate max-w-[40px]">
-                {trend.label.split(' ')[0]}
-              </span>
             </div>
-          )
-        })}
-      </div>
 
-      {/* Legend kanan */}
-      <div className="space-y-4 self-center text-xs">
-        {[
-          {
-            color: 'bg-emerald-500',
-            label: 'PEMASUKAN',
-            value: 15_000_000,
-          },
-          {
-            color: 'bg-blue-600',
-            label: 'PENGELUARAN',
-            value: 8_500_000,
-          },
-        ].map(({ color, label, value }) => (
-          <div key={label} className="space-y-1">
-            <div className="flex items-center gap-1.5 text-[10px]
-                            text-slate-400 font-bold">
-              <span className={`w-1.5 h-1.5 ${color} rounded-full`} />
-              {label}
+            {/* Outflow bar */}
+            <div className="flex items-center gap-2">
+              <span className="text-[9px] text-blue-400 font-bold w-6">↓</span>
+              <div className="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-blue-500 rounded-full transition-all duration-700"
+                  style={{ width: triggered ? `${outPct}%` : '0%' }}
+                />
+              </div>
             </div>
-            <p className="font-extrabold text-slate-800 text-[11px]">
-              {formatIDR(value)}
-            </p>
           </div>
-        ))}
-
-        <div className="bg-blue-50/50 p-2.5 rounded-2xl
-                        border border-blue-100/50 space-y-0.5">
-          <span className="text-[8px] text-blue-500
-                           font-extrabold uppercase">
-            Rata-rata
-          </span>
-          <p className="font-extrabold text-blue-600 text-[10px]">
-            {formatIDR(6_500_000)}
-          </p>
-        </div>
-      </div>
+        )
+      })}
     </div>
   )
 }
