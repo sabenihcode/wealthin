@@ -40,6 +40,16 @@ export interface MonthlyTrend {
   outflow: number
 }
 
+// ── Saving Goal ──────────────────────────────────────────────────────
+export interface SavingGoal {
+  id:            string
+  name:          string
+  emoji:         string
+  targetAmount:  number
+  currentAmount: number
+  deadline:      string
+}
+
 // ── Modal ─────────────────────────────────────────────────────────────
 export type ModalType =
   | 'metode'
@@ -58,15 +68,6 @@ export type AnalisisSubTab =
   | 'Pengeluaran'
   | 'Kategori'
   | 'Tren'
-
-export interface SavingGoal {
-  id:            string
-  name:          string
-  emoji:         string
-  targetAmount:  number
-  currentAmount: number
-  deadline:      string
-}
 
 // ── Toast ─────────────────────────────────────────────────────────────
 export interface ToastState {
@@ -88,11 +89,12 @@ export interface AppContextValue {
   // gemini ai
   geminiApiKey:      string
   setGeminiApiKey:   (key: string) => void
-  // budget & language
+  // user profile
+  userName:          string
+  setUserName:       (name: string) => void
+  // budget
   budget:            number
   setBudget:         (n: number) => void
-  language:          string
-  setLanguage:       (lang: string) => void
   // ui navigation
   activeTab:         TabType
   setActiveTab:      (tab: TabType) => void
@@ -109,15 +111,6 @@ export interface AppContextValue {
   // toast
   toast:             ToastState
   showToast:         (message: string) => void
-}
-
-// ── Summary finansial ─────────────────────────────────────────────────
-export interface FinancialSummary {
-  totalPemasukan:  number
-  totalPengeluaran: number
-  saldoBersih:     number
-  categorySpending: CategorySpending
-  totalKategori:   number
 }
 
 // ── Form tambah transaksi ─────────────────────────────────────────────
