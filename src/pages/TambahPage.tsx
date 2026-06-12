@@ -15,7 +15,6 @@ export function TambahPage(): JSX.Element {
   const [amount,  setAmount]  = useState<number>(0)
   const [cat,     setCat]     = useState<CategoryName>('Makan & Minum')
   
-  // Default tanggal hari ini (YYYY-MM-DD)
   const [date, setDate]       = useState<string>(new Date().toISOString().split('T')[0])
   const [payment, setPayment] = useState<string>('Cash')
   const [note,    setNote]    = useState<string>('')
@@ -35,7 +34,6 @@ export function TambahPage(): JSX.Element {
     const detected = autoDetectCategory(note)
     const finalCat = type === 'pemasukan' ? 'Pemasukan' : (detected !== 'Lainnya' ? detected : cat)
     
-    // Format tanggal jadi "Hari ini, 14:30" atau "12 Jun 2025"
     const dateObj = new Date(date)
     const today = new Date()
     let formattedDate: string
@@ -142,8 +140,6 @@ export function TambahPage(): JSX.Element {
 
       {/* Details: Tanggal & Pembayaran */}
       <div className="bg-slate-900 rounded-3xl p-5 border border-slate-800 shadow-lg space-y-4">
-        
-        {/* Tanggal Otomatis (Date Picker) */}
         <div className="space-y-2">
           <label htmlFor="tx-date" className="text-xs font-extrabold text-white">Tanggal</label>
           <div className="flex items-center justify-between bg-slate-950 rounded-2xl p-3 border border-slate-800">
@@ -161,7 +157,6 @@ export function TambahPage(): JSX.Element {
           </div>
         </div>
 
-        {/* Metode Pembayaran (Hanya jika Pengeluaran) */}
         {type === 'pengeluaran' && (
           <div className="space-y-2 animate-fade-in">
             <label htmlFor="tx-payment" className="text-xs font-extrabold text-white">Metode Pembayaran</label>
@@ -181,6 +176,40 @@ export function TambahPage(): JSX.Element {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Catatan */}
+      <div className="bg-slate-900 rounded-3xl p-5 border border-slate-800 shadow-lg space-y-2">
+        <label htmlFor="tx-note" className="text-xs font-extrabold text-white">Catatan <span className="text-slate-500 font-normal">(Opsional)</span></label>
+        <textarea
+          id="tx-note"
+          value={note}
+          onChange={e => setNote(e.target.value.slice(0, 100))}
+          placeholder="Tulis catatan..."
+          rows={3}
+          className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-3 text-xs font-semibold text-slate-300 placeholder-slate-600 focus:outline-none focus:border-fuchsia-500/50 resize-none"
+        />
+      </div>
+
+      {/* Upload Bukti */}
+      <div className="bg-slate-900 rounded-3xl p-5 border border-slate-800 shadow-lg space-y-2">
+        <span className="text-xs font-extrabold text-white block">Tambah Bukti <span className="text-slate-500 font-normal">(Opsional)</span></span>
+        <label className="border-2 border-dashed border-slate-700 hover:border-fuchsia-500/50 rounded-2xl p-5 flex flex-col items-center justify-center gap-3 cursor-pointer hover:bg-fuchsia-500/5 transition-all">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFile}
+            className="hidden"
+          />
+          <div className="w-10 h-10 bg-fuchsia-500/10 text-fuchsia-400 rounded-xl flex items-center justify-center">
+            <Camera className="w-5 h-5" />
+          </div>
+          <div className="text-center">
+            <p className="text-xs font-extrabold text-fuchsia-400">
+              {receipt ?? 'Tambah foto struk atau bukti'}
+            </p>
+          </div>
+        </label>
       </div>
 
       {/* Submit */}
