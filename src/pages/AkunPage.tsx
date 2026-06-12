@@ -17,10 +17,18 @@ const ACCOUNT_MENU: MenuItem[] = [
 ]
 
 export function AkunPage(): JSX.Element {
-  const { openModal, showToast, geminiApiKey, setGeminiApiKey } = useApp()
+  const { openModal, showToast, geminiApiKey, setGeminiApiKey, userName, setUserName } = useApp()
   const { transactions, addTransaction } = useTransactions()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [showKey, setShowKey] = useState(false)
+
+  const handleEditName = () => {
+    const newName = window.prompt('Masukkan nama kamu:', userName)
+    if (newName !== null && newName.trim() !== '') {
+      setUserName(newName.trim())
+      showToast('Nama berhasil diperbarui!')
+    }
+  }
 
   const handleExport = () => {
     if (transactions.length === 0) return showToast('Belum ada transaksi untuk diekspor.')
@@ -55,11 +63,16 @@ export function AkunPage(): JSX.Element {
       </div>
 
       {/* Profile */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 flex items-center gap-4 cursor-pointer hover:bg-slate-800/50 transition-colors">
-        <div className="w-16 h-16 bg-blue-500/10 rounded-full border-2 border-slate-800 flex items-center justify-center text-3xl">👦</div>
-        <div className="space-y-1">
-          <h3 className="text-base font-extrabold text-white">Sabenih</h3>
-          <p className="text-xs text-slate-500 font-bold">sabenih@email.com</p>
+      <div 
+        onClick={handleEditName}
+        className="bg-slate-900 border border-slate-800 rounded-3xl p-5 flex items-center gap-4 cursor-pointer hover:bg-slate-800/50 transition-colors"
+      >
+        <div className="w-16 h-16 bg-blue-500/10 rounded-full border-2 border-slate-800 flex items-center justify-center text-3xl font-bold text-blue-400">
+          {userName.charAt(0).toUpperCase()}
+        </div>
+        <div className="flex-1 space-y-1">
+          <h3 className="text-base font-extrabold text-white">{userName}</h3>
+          <p className="text-xs text-slate-500 font-bold">Klik untuk mengubah nama</p>
           <span className="inline-block bg-fuchsia-500/10 border border-fuchsia-500/20 text-fuchsia-400 text-[9px] font-extrabold px-3 py-1 rounded-full uppercase">Premium</span>
         </div>
       </div>
