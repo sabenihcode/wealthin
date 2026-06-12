@@ -22,10 +22,8 @@ import type {
   SavingGoal,
 } from '../types'
 
-// ── Context creation ──────────────────────────────────────────────────
 const AppContext = createContext<AppContextValue | null>(null)
 
-// ── Provider ──────────────────────────────────────────────────────────
 interface AppProviderProps {
   children: ReactNode
 }
@@ -90,6 +88,16 @@ export function AppProvider({ children }: AppProviderProps) {
     }
   }, [])
 
+  // ── User Profile (Nama Pengguna) ────────────────────────────────────
+  const [userName, setUserNameState] = useState<string>(() =>
+    storageGet<string>('wealthvibe_username', 'Sabenih')
+  )
+
+  const setUserName = useCallback((name: string): void => {
+    setUserNameState(name)
+    storageSet('wealthvibe_username', name)
+  }, [])
+
   // ── UI State ────────────────────────────────────────────────────────
   const [activeTab, setActiveTab]           = useState<TabType>('beranda')
   const [analisisSubTab, setAnalisisSubTab] = useState<AnalisisSubTab>('Ringkasan')
@@ -97,10 +105,9 @@ export function AppProvider({ children }: AppProviderProps) {
   const [hideBalance, setHideBalance]       = useState<boolean>(false)
   const [activeModal, setActiveModal]       = useState<ModalType | null>(null)
   const [budget, setBudget]                 = useState<number>(DEFAULT_BUDGET)
-  const [language, setLanguage]             = useState<string>('Bahasa Indonesia')
 
   // ── Toast ───────────────────────────────────────────────────────────
-  const [toast, setToast] = useState<ToastState>({
+  const [toast, setToast] = useState<ToastState({
     visible: false,
     message: '',
   })
@@ -135,10 +142,10 @@ export function AppProvider({ children }: AppProviderProps) {
     deleteGoal,
     geminiApiKey,
     setGeminiApiKey,
+    userName,
+    setUserName,
     budget,
     setBudget,
-    language,
-    setLanguage,
     activeTab,
     setActiveTab,
     goTo,
@@ -162,7 +169,6 @@ export function AppProvider({ children }: AppProviderProps) {
   )
 }
 
-// ── Consumer hook ─────────────────────────────────────────────────────
 export function useApp(): AppContextValue {
   const ctx = useContext(AppContext)
   if (ctx === null) {
