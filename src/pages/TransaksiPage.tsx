@@ -3,7 +3,7 @@ import { Search, Inbox } from 'lucide-react'
 import { useTransactions } from '../hooks/useTransactions'
 import { TransactionItem } from '../components/cards/TransactionItem'
 import { formatIDR } from '../utils/formatters'
-import type { Transaction, TransactionType } from '../types'
+import type { Transaction } from '../types'
 
 type FilterType = 'semua' | 'pemasukan' | 'pengeluaran'
 
