@@ -2,25 +2,471 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
 
+/* ============================================
+   CSS VARIABLES - SAGE THEME
+   ============================================ */
+:root {
+  /* Sage Colors */
+  --sage-50: #F5F8F3;
+  --sage-100: #E8F0E3;
+  --sage-200: #D1E2C7;
+  --sage-300: #B8D4A8;
+  --sage-400: #9BB57C;
+  --sage-500: #87A96B;
+  --sage-600: #6B8B56;
+  --sage-700: #5F7C56;
+  --sage-800: #4A6741;
+  --sage-900: #3A5234;
+  --sage-950: #2A3D26;
+
+  /* RGB Values for opacity */
+  --sage-rgb: 135, 169, 107;
+  --emerald-rgb: 16, 185, 129;
+  --rose-rgb: 244, 63, 94;
+  
+  /* Semantic Colors */
+  --color-primary: var(--sage-500);
+  --color-success: #10B981;
+  --color-danger: #F43F5E;
+  --color-warning: #F59E0B;
+  --color-info: #06B6D4;
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
 @layer base {
+  * {
+    @apply border-slate-800;
+  }
+
   html {
     scroll-behavior: smooth;
-  }
-  body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #020617; /* slate-950 */
   }
-  /* Hilangkan kotak biru saat klik tombol di HP */
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 
+                 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+    @apply bg-slate-950 text-white;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    letter-spacing: -0.011em;
+  }
+
+  /* Improved tap highlight */
   button, a, input, select, textarea {
     -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
   }
-  /* Scrollbar halus */
-  ::-webkit-scrollbar {
-    width: 0px;
-    background: transparent;
+
+  /* Better focus visible */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-sage-500/50 ring-offset-2 ring-offset-slate-950;
+  }
+
+  /* Input placeholder */
+  ::placeholder {
+    @apply text-slate-600;
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   SCROLLBAR STYLES
+   ============================================ */
+@layer utilities {
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Custom scrollbar */
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-track {
+    @apply bg-slate-900 rounded-full;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    @apply bg-sage-600 rounded-full;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    @apply bg-sage-500;
+  }
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@layer utilities {
+  @keyframes fadeIn {
+    from { 
+      opacity: 0; 
+      transform: scale(0.98) translateY(4px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: scale(1) translateY(0); 
+    }
+  }
+
+  @keyframes slideUp {
+    from { 
+      transform: translateY(100%); 
+      opacity: 0;
+    }
+    to { 
+      transform: translateY(0); 
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideDown {
+    from { 
+      transform: translateY(-100%); 
+      opacity: 0;
+    }
+    to { 
+      transform: translateY(0); 
+      opacity: 1;
+    }
+  }
+
+  @keyframes scaleIn {
+    from { 
+      transform: scale(0.95); 
+      opacity: 0; 
+    }
+    to { 
+      transform: scale(1); 
+      opacity: 1; 
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  @keyframes pulse-sage {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.6;
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  /* Animation Classes */
+  .animate-fade-in {
+    animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-slide-down {
+    animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(var(--sage-rgb), 0.1) 50%,
+      transparent 100%
+    );
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  .animate-pulse-sage {
+    animation: pulse-sage 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+}
+
+/* ============================================
+   CUSTOM UTILITIES
+   ============================================ */
+@layer utilities {
+  /* Glass morphism */
+  .glass {
+    @apply bg-slate-900/50 backdrop-blur-xl border border-slate-800/50;
+  }
+
+  .glass-sage {
+    background: rgba(var(--sage-rgb), 0.05);
+    @apply backdrop-blur-xl border border-sage-500/20;
+  }
+
+  /* Gradient text */
+  .text-gradient-sage {
+    @apply bg-gradient-to-r from-sage-400 to-emerald-400 bg-clip-text text-transparent;
+  }
+
+  .text-gradient-premium {
+    @apply bg-gradient-to-r from-sage-300 via-emerald-300 to-cyan-300 bg-clip-text text-transparent;
+  }
+
+  /* Shadows */
+  .shadow-sage {
+    box-shadow: 0 4px 20px rgba(var(--sage-rgb), 0.15);
+  }
+
+  .shadow-sage-lg {
+    box-shadow: 0 10px 40px rgba(var(--sage-rgb), 0.25);
+  }
+
+  .shadow-emerald {
+    box-shadow: 0 4px 20px rgba(var(--emerald-rgb), 0.15);
+  }
+
+  .shadow-rose {
+    box-shadow: 0 4px 20px rgba(var(--rose-rgb), 0.15);
+  }
+
+  /* Glow effects */
+  .glow-sage {
+    box-shadow: 
+      0 0 20px rgba(var(--sage-rgb), 0.3),
+      0 0 40px rgba(var(--sage-rgb), 0.1);
+  }
+
+  .glow-sage-strong {
+    box-shadow: 
+      0 0 30px rgba(var(--sage-rgb), 0.4),
+      0 0 60px rgba(var(--sage-rgb), 0.2);
+  }
+
+  /* Border glow */
+  .border-glow-sage {
+    position: relative;
+  }
+
+  .border-glow-sage::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, 
+      rgba(var(--sage-rgb), 0.5), 
+      rgba(var(--sage-rgb), 0.1)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, 
+                  linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Skeleton loading */
+  .skeleton {
+    @apply bg-slate-800/50 animate-pulse rounded-2xl;
+  }
+
+  /* Card hover lift */
+  .card-lift {
+    @apply transition-all duration-300;
+  }
+
+  .card-lift:hover {
+    @apply -translate-y-1 shadow-2xl;
+  }
+
+  /* Interactive scale */
+  .scale-active {
+    @apply active:scale-95 transition-transform duration-150;
+  }
+
+  /* Smooth gradients */
+  .gradient-sage {
+    background: linear-gradient(135deg, #87A96B 0%, #B8D4A8 100%);
+  }
+
+  .gradient-sage-dark {
+    background: linear-gradient(135deg, #4A6741 0%, #87A96B 100%);
+  }
+
+  .gradient-sage-emerald {
+    background: linear-gradient(135deg, #87A96B 0%, #10B981 100%);
+  }
+}
+
+/* ============================================
+   COMPONENT STYLES
+   ============================================ */
+@layer components {
+  /* Button base */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 
+           rounded-xl font-bold text-sm transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-offset-2 
+           focus:ring-offset-slate-950 active:scale-95;
+  }
+
+  .btn-primary {
+    @apply btn bg-gradient-to-r from-sage-500 to-emerald-500 
+           text-white shadow-lg shadow-sage-500/20
+           hover:shadow-sage-500/30 hover:from-sage-600 hover:to-emerald-600
+           focus:ring-sage-500;
+  }
+
+  .btn-secondary {
+    @apply btn bg-slate-800 text-slate-300 border border-slate-700
+           hover:bg-slate-700 hover:text-white focus:ring-slate-600;
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent text-slate-400 
+           hover:bg-slate-800 hover:text-white;
+  }
+
+  .btn-danger {
+    @apply btn bg-rose-500/10 text-rose-400 border border-rose-500/20
+           hover:bg-rose-500/20 focus:ring-rose-500;
+  }
+
+  /* Input base */
+  .input {
+    @apply w-full bg-slate-900 border border-slate-800 rounded-2xl 
+           py-3 px-4 text-sm font-semibold text-white 
+           placeholder-slate-600 transition-all
+           focus:outline-none focus:border-sage-500/50 
+           focus:ring-2 focus:ring-sage-500/20;
+  }
+
+  /* Badge */
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-1 
+           rounded-full text-xs font-bold;
+  }
+
+  .badge-sage {
+    @apply badge bg-sage-500/10 text-sage-400 border border-sage-500/20;
+  }
+
+  .badge-emerald {
+    @apply badge bg-emerald-500/10 text-emerald-400 border border-emerald-500/20;
+  }
+
+  .badge-rose {
+    @apply badge bg-rose-500/10 text-rose-400 border border-rose-500/20;
+  }
+
+  /* Card */
+  .card {
+    @apply bg-slate-900 border border-slate-800 rounded-3xl p-5 
+           shadow-lg shadow-black/10 transition-all;
+  }
+
+  .card-hover {
+    @apply card hover:border-slate-700 hover:shadow-xl;
+  }
+
+  .card-interactive {
+    @apply card-hover cursor-pointer active:scale-[0.98];
+  }
+}
+
+/* ============================================
+   SELECTION & HIGHLIGHTING
+   ============================================ */
+::selection {
+  @apply bg-sage-500/20 text-sage-100;
+}
+
+::-moz-selection {
+  @apply bg-sage-500/20 text-sage-100;
+}
+
+/* ============================================
+   MOBILE OPTIMIZATION
+   ============================================ */
+@media (max-width: 768px) {
+  /* Larger tap targets on mobile */
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Prevent text size adjustment */
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Prevent zoom on input focus */
+  input, select, textarea {
+    font-size: 16px;
+  }
+}
+
+/* ============================================
+   DARK MODE ENHANCEMENTS
+   ============================================ */
+@media (prefers-color-scheme: dark) {
+  /* Additional dark mode adjustments if needed */
+  :root {
+    color-scheme: dark;
+  }
+}
+
+/* ============================================
+   REDUCED MOTION
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+@media print {
+  * {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
   }
 }
