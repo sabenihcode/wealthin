@@ -2,7 +2,6 @@ import {
   ChevronRight,
   Calendar,
   Lightbulb,
-  Sparkles,
   ArrowUpRight,
   ArrowDownRight,
   BarChart2,
