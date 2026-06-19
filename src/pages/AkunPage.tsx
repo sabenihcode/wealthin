@@ -8,12 +8,14 @@ import {
   KeyRound,
   Eye,
   EyeOff,
+  Trash,
 } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { useApp } from '../context/AppContext'
 import { useTransactions } from '../hooks/useTransactions'
 import { BalanceCard } from '../components/cards/BalanceCard'
 import { exportToExcel, importFromExcel } from '../utils/dataManager'
+import { resetAllData, resetTransactions, exportDataBeforeReset } from '../utils/dataReset'
 import type { MenuItem, ModalType } from '../types'
 
 const ACCOUNT_MENU: MenuItem[] = [
@@ -84,6 +86,40 @@ export function AkunPage(): JSX.Element {
       showToast('Format file tidak sesuai.', 'error')
     }
     if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  // ────────────────────────────────────────────────────────────
+  // RESET HANDLERS
+  // ────────────────────────────────────────────────────────────
+
+  const handleResetTransactions = () => {
+    const confirm = window.confirm(
+      'Hapus semua transaksi? Tindakan ini tidak bisa dibatalkan.\n\nTik OK untuk melanjutkan.'
+    )
+    if (confirm) {
+      exportDataBeforeReset() // Backup otomatis
+      setTimeout(() => {
+        resetTransactions()
+        showToast('Semua transaksi berhasil dihapus!', 'success')
+      }, 500)
+    }
+  }
+
+  const handleResetAll = () => {
+    const confirm = window.confirm(
+      '⚠️ PERHATIAN!\n\nIni akan menghapus SEMUA data aplikasi:\n- Semua transaksi\n- Semua goals\n- Semua pengaturan\n\nTindakan ini TIDAK BISA DIBATALKAN!\n\nTik OK jika yakin.'
+    )
+    if (confirm) {
+      const confirm2 = window.confirm(
+        'Apakah kamu BENAR-BENAR yakin?\n\nData akan DIHAPUS selamanya.'
+      )
+      if (confirm2) {
+        exportDataBeforeReset() // Backup otomatis
+        setTimeout(() => {
+          resetAllData()
+        }, 500)
+      }
+    }
   }
 
   return (
@@ -267,13 +303,77 @@ export function AkunPage(): JSX.Element {
                            text-slate-600 hover:text-slate-400 transition-colors"
               >
                 {showKey ? (
-                  <EyeOff className="w-4 h-4" />
+                  <Eye className="w-4 h-4" />
                 ) : (
                   <Eye className="w-4 h-4" />
                 )}
               </button>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* ────────────────────────────────────────────────────────
+          DANGER ZONE - RESET DATA
+          ──────────────────────────────────────────────────────── */}
+      <div className="space-y-3">
+        <h3
+          className="text-xs font-extrabold text-rose-500 
+                     uppercase tracking-widest pl-1"
+        >
+          ⚠️ Zona Berbahaya
+        </h3>
+        <div
+          className="bg-rose-500/5 border border-rose-500/20 rounded-3xl 
+                      divide-y divide-rose-500/10 overflow-hidden"
+        >
+          {/* Reset Transaksi */}
+          <button
+            onClick={handleResetTransactions}
+            className="w-full px-4 py-3.5 flex items-center justify-between 
+                       text-left hover:bg-rose-500/10 transition-colors 
+                       first:rounded-t-3xl"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 bg-rose-500/10 text-rose-400 
+                              rounded-xl flex items-center justify-center">
+                <Trash className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-xs font-extrabold text-rose-400">
+                  Hapus Semua Transaksi
+                </h4>
+                <p className="text-[10px] text-rose-300 font-bold mt-0.5">
+                  Menghapus semua catatan transaksi (backup otomatis)
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-rose-700" />
+          </button>
+
+          {/* Reset All */}
+          <button
+            onClick={handleResetAll}
+            className="w-full px-4 py-3.5 flex items-center justify-between 
+                       text-left hover:bg-rose-500/10 transition-colors 
+                       last:rounded-b-3xl"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 bg-rose-500/20 text-rose-500 
+                              rounded-xl flex items-center justify-center">
+                <Trash className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-xs font-extrabold text-rose-500">
+                  Reset Semua Data
+                </h4>
+                <p className="text-[10px] text-rose-400 font-bold mt-0.5">
+                  Menghapus SEMUA data aplikasi (tidak bisa dibatalkan!)
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-rose-700" />
+          </button>
         </div>
       </div>
     </div>
