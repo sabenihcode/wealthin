@@ -20,20 +20,15 @@ import type {
   ModalType,
   ToastState,
   SavingGoal,
+  ToastType,
 } from '../types'
 
-// ══════════════════════════════════════════════════════════════════════
-// CONTEXT CREATION
-// ══════════════════════════════════════════════════════════════════════
 const AppContext = createContext<AppContextValue | null>(null)
 
 interface AppProviderProps {
   children: ReactNode
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// CONTEXT PROVIDER
-// ══════════════════════════════════════════════════════════════════════
 export function AppProvider({ children }: AppProviderProps) {
 
   // ──────────────────────────────────────────────────────────────────
@@ -160,14 +155,15 @@ export function AppProvider({ children }: AppProviderProps) {
   const [activeTab, setActiveTab] = useState<TabType>('beranda')
   const [analisisSubTab, setAnalisisSubTab] = useState<AnalisisSubTab>('Ringkasan')
   const [isAdding, setIsAdding] = useState<boolean>(false)
-  const [hideBalance, setHideBalance] = useState<boolean>(
+  const [hideBalance, setHideBalanceState] = useState<boolean>(
     storageGet<boolean>('wealthvibe_hide_balance', false)
   )
   const [activeModal, setActiveModal] = useState<ModalType | null>(null)
 
-  useEffect(() => {
-    storageSet('wealthvibe_hide_balance', hideBalance)
-  }, [hideBalance])
+  const setHideBalance = useCallback((v: boolean): void => {
+    setHideBalanceState(v)
+    storageSet('wealthvibe_hide_balance', v)
+  }, [])
 
   // ──────────────────────────────────────────────────────────────────
   // TOAST STATE
@@ -179,13 +175,12 @@ export function AppProvider({ children }: AppProviderProps) {
   })
 
   const showToast = useCallback(
-    (message: string, type: ToastState['type'] = 'success'): void => {
+    (message: string, type: ToastType = 'success'): void => {
       setToast({ visible: true, message, type })
-      const timer = setTimeout(
+      setTimeout(
         () => setToast({ visible: false, message: '', type: 'success' }),
         3000
       )
-      return () => clearTimeout(timer)
     },
     []
   )
@@ -273,9 +268,6 @@ export function AppProvider({ children }: AppProviderProps) {
   )
 }
 
-// ══════════════════════════════════════════════════════════════════════
-// CUSTOM HOOK
-// ══════════════════════════════════════════════════════════════════════
 export function useApp(): AppContextValue {
   const ctx = useContext(AppContext)
   if (ctx === null) {
@@ -283,10 +275,6 @@ export function useApp(): AppContextValue {
   }
   return ctx
 }
-
-// ══════════════════════════════════════════════════════════════════════
-// HELPER HOOKS (Optional)
-// ══════════════════════════════════════════════════════════════════════
 
 /**
  * Hook untuk mengakses hanya state transaksi
@@ -376,4 +364,4 @@ export function useSettings() {
 export function useToast() {
   const { toast, showToast, hideToast } = useApp()
   return { toast, showToast, hideToast }
-}
+    }
