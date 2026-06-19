@@ -1,25 +1,34 @@
 import type { LucideIcon } from 'lucide-react'
 
-// ── Transaksi ────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════
+// TRANSACTION TYPES
+// ══════════════════════════════════════════════════════════════════════
+
 export type TransactionType = 'pemasukan' | 'pengeluaran'
 
 export interface Transaction {
-  id:           string
-  title:        string
-  category:     string
-  amount:       number
-  type:         TransactionType
-  date:         string
-  brandColor:   string
+  id: string
+  title: string
+  category: string
+  amount: number
+  type: TransactionType
+  date: string
+  brandColor: string
   brandInitial: string
+  note?: string
+  payment?: string
+  receipt?: string | null
 }
 
-// ── Kategori ─────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════
+// CATEGORY TYPES
+// ══════════════════════════════════════════════════════════════════════
+
 export interface CategoryConfig {
-  color:    string
+  color: string
   activeBg: string
-  icon:     LucideIcon
-  fill:     string
+  icon: LucideIcon
+  fill: string
 }
 
 export type CategoryName =
@@ -28,29 +37,50 @@ export type CategoryName =
   | 'Belanja'
   | 'Kesehatan'
   | 'Hiburan'
+  | 'Pendidikan'
+  | 'Tagihan'
   | 'Lainnya'
 
 export type CategoriesConfig = Record<CategoryName, CategoryConfig>
 export type CategorySpending = Record<CategoryName, number>
 
-// ── Tren Bulanan ──────────────────────────────────────────────────────
-export interface MonthlyTrend {
-  label:   string
-  inflow:  number
-  outflow: number
-}
+// ══════════════════════════════════════════════════════════════════════
+// GOAL TYPES
+// ══════════════════════════════════════════════════════════════════════
 
-// ── Saving Goal ──────────────────────────────────────────────────────
 export interface SavingGoal {
-  id:            string
-  name:          string
-  emoji:         string
-  targetAmount:  number
+  id: string
+  name: string
+  emoji: string
+  targetAmount: number
   currentAmount: number
-  deadline:      string
+  deadline: string
+  createdAt?: string
+  updatedAt?: string
 }
 
-// ── Modal ─────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════
+// TREND TYPES
+// ══════════════════════════════════════════════════════════════════════
+
+export interface MonthlyTrend {
+  label: string
+  inflow: number
+  outflow: number
+  date?: string
+}
+
+export interface DailyTrend {
+  date: string
+  inflow: number
+  outflow: number
+  net: number
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// MODAL TYPES
+// ══════════════════════════════════════════════════════════════════════
+
 export type ModalType =
   | 'metode'
   | 'kategori'
@@ -59,7 +89,10 @@ export type ModalType =
   | 'keluar'
   | 'notifikasi'
 
-// ── Tab Navigasi ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════
+// NAVIGATION TYPES
+// ══════════════════════════════════════════════════════════════════════
+
 export type TabType = 'beranda' | 'transaksi' | 'analisis' | 'akun' | 'tambah'
 
 export type AnalisisSubTab =
@@ -69,96 +102,177 @@ export type AnalisisSubTab =
   | 'Kategori'
   | 'Tren'
 
-// ── Toast ─────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════
+// NOTIFICATION & FEEDBACK TYPES
+// ══════════════════════════════════════════════════════════════════════
+
+export type ToastType = 'success' | 'error' | 'info' | 'warning'
+
 export interface ToastState {
   visible: boolean
   message: string
+  type?: ToastType
+  duration?: number
 }
 
-// ── Summary finansial ─────────────────────────────────────────────────
+export interface Notification {
+  id: string
+  title: string
+  message: string
+  type: 'success' | 'warning' | 'error' | 'info'
+  timestamp: number
+  read: boolean
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// FINANCIAL SUMMARY TYPES
+// ══════════════════════════════════════════════════════════════════════
+
 export interface FinancialSummary {
-  totalPemasukan:  number
+  totalPemasukan: number
   totalPengeluaran: number
-  saldoBersih:     number
+  saldoBersih: number
   categorySpending: CategorySpending
-  totalKategori:   number
+  totalKategori: number
 }
 
-// ── Context ───────────────────────────────────────────────────────────
-export interface AppContextValue {
-  // data transaksi
-  transactions:      Transaction[]
-  addTransaction:    (tx: Transaction) => void
-  deleteTransaction: (id: string) => void
-  // saving goals
-  goals:             SavingGoal[]
-  addGoal:           (goal: SavingGoal) => void
-  fundGoal:          (id: string, amount: number) => void
-  deleteGoal:        (id: string) => void
-  // gemini ai
-  geminiApiKey:      string
-  setGeminiApiKey:   (key: string) => void
-  // user profile
-  userName:          string
-  setUserName:       (name: string) => void
-  // budget
-  budget:            number
-  setBudget:         (n: number) => void
-  // ui navigation
-  activeTab:         TabType
-  setActiveTab:      (tab: TabType) => void
-  goTo:              (tab: TabType) => void
-  analisisSubTab:    AnalisisSubTab
-  setAnalisisSubTab: (sub: AnalisisSubTab) => void
-  isAdding:          boolean
-  setIsAdding:       (v: boolean) => void
-  hideBalance:       boolean
-  setHideBalance:    (v: boolean) => void
-  activeModal:       ModalType | null
-  openModal:         (name: ModalType) => void
-  closeModal:        () => void
-  // toast
-  toast:             ToastState
-  showToast:         (message: string) => void
+export interface MonthlyComparison {
+  currentMonth: FinancialSummary
+  previousMonth: FinancialSummary
+  percentageChange: {
+    income: number
+    expense: number
+    net: number
+  }
 }
 
-// ── Form tambah transaksi ─────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════
+// FORM TYPES
+// ══════════════════════════════════════════════════════════════════════
+
 export interface TransactionForm {
-  type:    TransactionType
-  amount:  number
-  cat:     CategoryName
-  date:    string
+  type: TransactionType
+  amount: number
+  category: CategoryName
+  date: string
   payment: string
-  note:    string
+  note: string
   receipt: string | null
 }
 
-// ── Menu item (Akun page) ─────────────────────────────────────────────
-export interface MenuItem {
-  key:   ModalType | null
-  label: string
-  sub:   string
-  Icon:  LucideIcon
-  bg:    string
+export interface BudgetForm {
+  category: CategoryName
+  limit: number
+  alert: number
 }
 
-// ── Nav item (Bottom nav) ─────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════
+// UI COMPONENT TYPES
+// ══════════════════════════════════════════════════════════════════════
+
+export interface MenuItem {
+  key: ModalType | null
+  label: string
+  sub: string
+  Icon: LucideIcon
+  bg: string
+}
+
 export interface NavItem {
-  key:   TabType | 'transaksi'
+  key: TabType | 'transaksi'
   label: string | null
-  Icon:  LucideIcon
+  Icon: LucideIcon
   isFAB?: boolean
 }
 
-// ── Donut segment ─────────────────────────────────────────────────────
-export interface DonutSegment {
-  color:  string
-  pct:    number
+export interface ChartSegment {
+  color: string
+  percentage: number
   offset: number
+  label: string
 }
 
-// ── Bar chart grid line ───────────────────────────────────────────────
 export interface GridLine {
-  top:   number
+  top: number
   label: string
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// API & EXTERNAL SERVICE TYPES
+// ══════════════════════════════════════════════════════════════════════
+
+export interface GeminiResponse {
+  text: string
+  timestamp: number
+}
+
+export interface AIAnalysis {
+  summary: string
+  insights: string[]
+  recommendations: string[]
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// STORAGE & PERSISTENCE TYPES
+// ══════════════════════════════════════════════════════════════════════
+
+export interface StorageData {
+  transactions: Transaction[]
+  goals: SavingGoal[]
+  budget: number
+  userName: string
+  hideBalance: boolean
+  theme: 'dark' | 'light'
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// CONTEXT VALUE TYPE
+// ══════════════════════════════════════════════════════════════════════
+
+export interface AppContextValue {
+  // ─── Transactions ───────────────────────────────────────────────
+  transactions: Transaction[]
+  addTransaction: (tx: Transaction) => void
+  deleteTransaction: (id: string) => void
+  updateTransaction: (id: string, updates: Partial<Transaction>) => void
+
+  // ─── Saving Goals ───────────────────────────────────────────────
+  goals: SavingGoal[]
+  addGoal: (goal: SavingGoal) => void
+  fundGoal: (id: string, amount: number) => void
+  updateGoal: (id: string, updates: Partial<SavingGoal>) => void
+  deleteGoal: (id: string) => void
+
+  // ─── Settings & User ────────────────────────────────────────────
+  geminiApiKey: string
+  setGeminiApiKey: (key: string) => void
+  userName: string
+  setUserName: (name: string) => void
+  theme: 'dark' | 'light'
+  setTheme: (theme: 'dark' | 'light') => void
+  budget: number
+  setBudget: (amount: number) => void
+
+  // ─── UI Navigation ──────────────────────────────────────────────
+  activeTab: TabType
+  setActiveTab: (tab: TabType) => void
+  goTo: (tab: TabType) => void
+  analisisSubTab: AnalisisSubTab
+  setAnalisisSubTab: (sub: AnalisisSubTab) => void
+  isAdding: boolean
+  setIsAdding: (v: boolean) => void
+  hideBalance: boolean
+  setHideBalance: (v: boolean) => void
+  activeModal: ModalType | null
+  openModal: (name: ModalType) => void
+  closeModal: () => void
+
+  // ─── Toast & Feedback ───────────────────────────────────────────
+  toast: ToastState
+  showToast: (message: string, type?: ToastType) => void | (() => void)
+  hideToast: () => void
+
+  // ─── Loading State ──────────────────────────────────────────────
+  isLoading: boolean
+  setIsLoading: (v: boolean) => void
 }
