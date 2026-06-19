@@ -11,7 +11,6 @@ import { AddGoalSheet } from '../components/goals/AddGoalSheet'
 import type { CategoryName } from '../types'
 
 export function BerandaPage(): JSX.Element {
-  // Ambil userName dari useApp
   const {
     openModal,
     setActiveTab,
@@ -55,7 +54,7 @@ export function BerandaPage(): JSX.Element {
                      rounded-full flex items-center justify-center shadow-sm
                      hover:scale-105 active:scale-95 transition-all"
         >
-          <Bell className="w-5 h-5 text-blue-400 fill-current" />
+          <Bell className="w-5 h-5 text-sage-400 fill-current" />
           <span className="absolute top-3 right-3 w-2.5 h-2.5
                            bg-red-500 rounded-full ring-2 ring-slate-950" />
         </button>
@@ -68,16 +67,16 @@ export function BerandaPage(): JSX.Element {
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <Target className="w-4 h-4 text-fuchsia-400" />
+            <Target className="w-4 h-4 text-sage-400" />
             <h3 className="text-xs font-extrabold text-slate-400 uppercase tracking-widest">
               Target Nabung
             </h3>
           </div>
           <button
             onClick={() => setShowAddGoal(true)}
-            className="flex items-center gap-1 bg-fuchsia-500/10
-                       text-fuchsia-400 text-[10px] font-extrabold
-                       px-3 py-1.5 rounded-full hover:bg-fuchsia-500/20
+            className="flex items-center gap-1 bg-sage-500/10
+                       text-sage-400 text-[10px] font-extrabold
+                       px-3 py-1.5 rounded-full hover:bg-sage-500/20
                        transition-colors"
           >
             <Plus className="w-3 h-3" /> Baru
@@ -123,8 +122,8 @@ export function BerandaPage(): JSX.Element {
               {
                 label: 'Pengeluaran',
                 value: totalPengeluaran,
-                color: 'text-blue-400',
-                dot: 'bg-blue-400',
+                color: 'text-rose-400',
+                dot: 'bg-rose-400',
               },
             ] as const
           ).map(({ label, value, color, dot }) => (
@@ -152,7 +151,7 @@ export function BerandaPage(): JSX.Element {
             }}
           />
           <div
-            className="bg-blue-500 h-full transition-all duration-700"
+            className="bg-rose-500 h-full transition-all duration-700"
             style={{
               width: cashflowTotal > 0
                 ? `${(totalPengeluaran / cashflowTotal) * 100}%`
@@ -166,7 +165,7 @@ export function BerandaPage(): JSX.Element {
           <span className="text-slate-500 font-bold">
             Cashflow bulan ini
           </span>
-          <div className="flex items-center gap-1 font-extrabold text-blue-400">
+          <div className="flex items-center gap-1 font-extrabold text-sage-400">
             <span>
               {hideBalance ? 'Rp ••••••••' : formatIDR(saldoBersih)}
             </span>
@@ -187,7 +186,7 @@ export function BerandaPage(): JSX.Element {
               setActiveTab('analisis')
               setAnalisisSubTab('Kategori')
             }}
-            className="text-blue-400 text-xs font-extrabold
+            className="text-sage-400 text-xs font-extrabold
                        flex items-center gap-0.5 hover:underline"
           >
             Lihat semua <ChevronRight className="w-3.5 h-3.5" />
@@ -216,8 +215,8 @@ export function BerandaPage(): JSX.Element {
                       <span className="truncate">{name}</span>
                       <div className="flex items-center gap-2">
                         <span className="text-slate-300">{formatIDR(amount)}</span>
-                        <span className="text-blue-400 text-[10px]
-                                        bg-blue-500/10 px-1.5 py-0.5 rounded">
+                        <span className="text-sage-400 text-[10px]
+                                        bg-sage-500/10 px-1.5 py-0.5 rounded">
                           {pct}%
                         </span>
                       </div>
@@ -225,7 +224,7 @@ export function BerandaPage(): JSX.Element {
                     <div className="w-full h-1.5 bg-slate-800
                                    rounded-full overflow-hidden">
                       <div
-                        className="bg-blue-500 h-full rounded-full
+                        className="bg-sage-500 h-full rounded-full
                                    transition-all duration-700"
                         style={{ width: `${pct}%` }}
                       />
@@ -249,7 +248,7 @@ export function BerandaPage(): JSX.Element {
               setActiveTab('transaksi')
               showToast('Menampilkan semua transaksi!')
             }}
-            className="text-blue-400 text-xs font-extrabold
+            className="text-sage-400 text-xs font-extrabold
                        flex items-center gap-0.5 hover:underline"
           >
             Lihat semua <ChevronRight className="w-3.5 h-3.5" />
