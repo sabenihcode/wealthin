@@ -1,93 +1,86 @@
-import type { CategoryName } from '../types'
-
-interface PatternRule {
-  regex: RegExp
-  category: CategoryName
-}
-
-const PATTERNS: PatternRule[] = [
-  // Transportasi
-  {
-    regex: /grab|gojek|ojek|bensin|parkir|mrt|krl|busway|uber|taksi|tol/i,
-    category: 'Transportasi',
-  },
-
-  // Makan & Minum
-  {
-    regex: /makan|resto|warung|kfc|mcd|pizza|sate|nasi|starbucks|kopi|jus|cafe|restoran|bakso|soto/i,
-    category: 'Makan & Minum',
-  },
-
-  // Belanja
-  {
-    regex: /shopee|tokopedia|lazada|baju|sepatu|tas|uniqlo|zara|h&m|denim|pakaian|beli|shopping/i,
-    category: 'Belanja',
-  },
-
-  // Kesehatan
-  {
-    regex: /apotek|dokter|klinik|obat|vitamin|rs |rumah sakit|kesehatan|medis|farmasi|vaksin/i,
-    category: 'Kesehatan',
-  },
-
-  // Hiburan
-  {
-    regex: /netflix|spotify|game|steam|bioskop|cinema|hiburan|tiket|konser|musik|film/i,
-    category: 'Hiburan',
-  },
-
-  // Pendidikan
-  {
-    regex: /kursus|sekolah|universitas|buku|pelajaran|les|online|training|seminar|workshop|edukasi/i,
-    category: 'Pendidikan',
-  },
-
-  // Tagihan
-  {
-    regex: /listrik|air|internet|telepon|langganan|iuran|pajak|angsuran|cicilan|tagihan/i,
-    category: 'Tagihan',
-  },
-
-  // Grocery (Makan & Minum)
-  {
-    regex: /grocery|supermarket|indomaret|alfamart|sayur|buah|beras|telur|daging|ikan|belanja makanan/i,
-    category: 'Makan & Minum',
-  },
-]
+import {
+  UtensilsCrossed,
+  Car,
+  ShoppingBag,
+  Heart,
+  Music,
+  BookOpen,
+  FileText,
+  MoreHorizontal,
+} from 'lucide-react'
+import type { CategoriesConfig, CategoryName } from '../types'
 
 /**
- * Auto-detect kategori dari teks transaksi.
- * Fallback ke 'Lainnya' jika tidak ada yang cocok.
- *
- * @param text - Deskripsi atau judul transaksi
- * @returns Kategori yang terdeteksi atau 'Lainnya'
- *
- * @example
- * autoDetectCategory('Beli nasi di warung') // => 'Makan & Minum'
- * autoDetectCategory('Bayar listrik bulan ini') // => 'Tagihan'
- * autoDetectCategory('Transfer ke teman') // => 'Lainnya'
+ * Complete categories configuration dengan Sage Green theme
  */
-export function autoDetectCategory(text: string = ''): CategoryName {
-  // Trim dan lowercase untuk matching yang lebih akurat
-  const normalizedText = text.toLowerCase().trim()
+export const CATEGORIES_CONFIG: CategoriesConfig = {
+  'Makan & Minum': {
+    color: 'bg-orange-500/10 text-orange-400',
+    activeBg: 'bg-orange-600 text-white',
+    icon: UtensilsCrossed,
+    fill: '#FB923C',
+  },
+  'Transportasi': {
+    color: 'bg-sky-500/10 text-sky-400',
+    activeBg: 'bg-sky-600 text-white',
+    icon: Car,
+    fill: '#0EA5E9',
+  },
+  'Belanja': {
+    color: 'bg-pink-500/10 text-pink-400',
+    activeBg: 'bg-pink-600 text-white',
+    icon: ShoppingBag,
+    fill: '#EC4899',
+  },
+  'Kesehatan': {
+    color: 'bg-lime-500/10 text-lime-400',
+    activeBg: 'bg-lime-600 text-white',
+    icon: Heart,
+    fill: '#84CC16',
+  },
+  'Hiburan': {
+    color: 'bg-violet-500/10 text-violet-400',
+    activeBg: 'bg-violet-600 text-white',
+    icon: Music,
+    fill: '#A78BFA',
+  },
+  'Pendidikan': {
+    color: 'bg-blue-500/10 text-blue-400',
+    activeBg: 'bg-blue-600 text-white',
+    icon: BookOpen,
+    fill: '#3B82F6',
+  },
+  'Tagihan': {
+    color: 'bg-yellow-500/10 text-yellow-400',
+    activeBg: 'bg-yellow-600 text-white',
+    icon: FileText,
+    fill: '#EAB308',
+  },
+  'Lainnya': {
+    color: 'bg-slate-500/10 text-slate-400',
+    activeBg: 'bg-slate-600 text-white',
+    icon: MoreHorizontal,
+    fill: '#94A3B8',
+  },
+} as const
 
-  // Jika text kosong, return default
-  if (!normalizedText) return 'Lainnya'
+/**
+ * Ordered list of category names
+ */
+export const CATEGORY_NAMES = Object.keys(
+  CATEGORIES_CONFIG
+) as CategoryName[]
 
-  // Check setiap pattern
-  for (const { regex, category } of PATTERNS) {
-    if (regex.test(normalizedText)) {
-      return category
-    }
-  }
-
-  // Default fallback
-  return 'Lainnya'
+/**
+ * Get category config by name
+ */
+export function getCategoryConfig(name: CategoryName) {
+  return CATEGORIES_CONFIG[name] || CATEGORIES_CONFIG['Lainnya']
 }
 
 /**
- * Suggestion helper - suggest kategori berdasarkan kategori sebelumnya
+ * Get all category names
  */
-export function suggestCategory(previousCategory?: CategoryName): CategoryName {
-  return previousCategory || 'Lainnya'
+export function getAllCategories(): CategoryName[] {
+  return CATEGORY_NAMES
 }
