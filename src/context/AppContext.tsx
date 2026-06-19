@@ -22,15 +22,23 @@ import type {
   SavingGoal,
 } from '../types'
 
+// ══════════════════════════════════════════════════════════════════════
+// CONTEXT CREATION
+// ══════════════════════════════════════════════════════════════════════
 const AppContext = createContext<AppContextValue | null>(null)
 
 interface AppProviderProps {
   children: ReactNode
 }
 
+// ══════════════════════════════════════════════════════════════════════
+// CONTEXT PROVIDER
+// ══════════════════════════════════════════════════════════════════════
 export function AppProvider({ children }: AppProviderProps) {
 
-  // ── Transactions ────────────────────────────────────────────────────
+  // ──────────────────────────────────────────────────────────────────
+  // TRANSACTIONS STATE
+  // ──────────────────────────────────────────────────────────────────
   const [transactions, setTransactions] = useState<Transaction[]>(() =>
     storageGet<Transaction[]>(STORAGE_KEY, DEFAULT_TRANSACTIONS)
   )
@@ -47,7 +55,15 @@ export function AppProvider({ children }: AppProviderProps) {
     setTransactions(prev => prev.filter(t => t.id !== id))
   }, [])
 
-  // ── Saving Goals ────────────────────────────────────────────────────
+  const updateTransaction = useCallback((id: string, updates: Partial<Transaction>): void => {
+    setTransactions(prev =>
+      prev.map(t => (t.id === id ? { ...t, ...updates } : t))
+    )
+  }, [])
+
+  // ──────────────────────────────────────────────────────────────────
+  // SAVING GOALS STATE
+  // ──────────────────────────────────────────────────────────────────
   const [goals, setGoals] = useState<SavingGoal[]>(() =>
     storageGet<SavingGoal[]>('wealthvibe_goals', [])
   )
@@ -64,9 +80,21 @@ export function AppProvider({ children }: AppProviderProps) {
     setGoals(prev =>
       prev.map(g =>
         g.id === id
-          ? { ...g, currentAmount: Math.min(g.currentAmount + amount, g.targetAmount) }
+          ? {
+              ...g,
+              currentAmount: Math.min(
+                g.currentAmount + amount,
+                g.targetAmount
+              ),
+            }
           : g
       )
+    )
+  }, [])
+
+  const updateGoal = useCallback((id: string, updates: Partial<SavingGoal>): void => {
+    setGoals(prev =>
+      prev.map(g => (g.id === id ? { ...g, ...updates } : g))
     )
   }, [])
 
@@ -74,7 +102,9 @@ export function AppProvider({ children }: AppProviderProps) {
     setGoals(prev => prev.filter(g => g.id !== id))
   }, [])
 
-  // ── Gemini API Key ─────────────────────────────────────────────────
+  // ──────────────────────────────────────────────────────────────────
+  // GEMINI API KEY STATE
+  // ──────────────────────────────────────────────────────────────────
   const [geminiApiKey, setGeminiApiKeyState] = useState<string>(() =>
     storageGet<string>('wealthvibe_gemini_key', '')
   )
@@ -88,7 +118,9 @@ export function AppProvider({ children }: AppProviderProps) {
     }
   }, [])
 
-  // ── User Profile (Nama Pengguna) ────────────────────────────────────
+  // ──────────────────────────────────────────────────────────────────
+  // USER PROFILE STATE
+  // ──────────────────────────────────────────────────────────────────
   const [userName, setUserNameState] = useState<string>(() =>
     storageGet<string>('wealthvibe_username', 'Sabenih')
   )
@@ -98,32 +130,84 @@ export function AppProvider({ children }: AppProviderProps) {
     storageSet('wealthvibe_username', name)
   }, [])
 
-  // ── UI State ────────────────────────────────────────────────────────
-  const [activeTab, setActiveTab]           = useState<TabType>('beranda')
-  const [analisisSubTab, setAnalisisSubTab] = useState<AnalisisSubTab>('Ringkasan')
-  const [isAdding, setIsAdding]             = useState<boolean>(false)
-  const [hideBalance, setHideBalance]       = useState<boolean>(false)
-  const [activeModal, setActiveModal]       = useState<ModalType | null>(null)
-  const [budget, setBudget]                 = useState<number>(DEFAULT_BUDGET)
+  // ──────────────────────────────────────────────────────────────────
+  // THEME & APPEARANCE STATE
+  // ──────────────────────────────────────────────────────────────────
+  const [theme, setThemeState] = useState<'dark' | 'light'>(() =>
+    storageGet<'dark' | 'light'>('wealthvibe_theme', 'dark')
+  )
 
-  // ── Toast ───────────────────────────────────────────────────────────
+  const setTheme = useCallback((t: 'dark' | 'light'): void => {
+    setThemeState(t)
+    storageSet('wealthvibe_theme', t)
+  }, [])
+
+  // ──────────────────────────────────────────────────────────────────
+  // BUDGET STATE
+  // ──────────────────────────────────────────────────────────────────
+  const [budget, setBudgetState] = useState<number>(() =>
+    storageGet<number>('wealthvibe_budget', DEFAULT_BUDGET)
+  )
+
+  const setBudget = useCallback((amount: number): void => {
+    setBudgetState(amount)
+    storageSet('wealthvibe_budget', amount)
+  }, [])
+
+  // ──────────────────────────────────────────────────────────────────
+  // UI STATE - NAVIGATION
+  // ──────────────────────────────────────────────────────────────────
+  const [activeTab, setActiveTab] = useState<TabType>('beranda')
+  const [analisisSubTab, setAnalisisSubTab] = useState<AnalisisSubTab>('Ringkasan')
+  const [isAdding, setIsAdding] = useState<boolean>(false)
+  const [hideBalance, setHideBalance] = useState<boolean>(
+    storageGet<boolean>('wealthvibe_hide_balance', false)
+  )
+  const [activeModal, setActiveModal] = useState<ModalType | null>(null)
+
+  useEffect(() => {
+    storageSet('wealthvibe_hide_balance', hideBalance)
+  }, [hideBalance])
+
+  // ──────────────────────────────────────────────────────────────────
+  // TOAST STATE
+  // ──────────────────────────────────────────────────────────────────
   const [toast, setToast] = useState<ToastState>({
     visible: false,
     message: '',
+    type: 'success',
   })
 
-  const showToast = useCallback((message: string): void => {
-    setToast({ visible: true, message })
-    setTimeout(() => setToast({ visible: false, message: '' }), 3000)
+  const showToast = useCallback(
+    (message: string, type: ToastState['type'] = 'success'): void => {
+      setToast({ visible: true, message, type })
+      const timer = setTimeout(
+        () => setToast({ visible: false, message: '', type: 'success' }),
+        3000
+      )
+      return () => clearTimeout(timer)
+    },
+    []
+  )
+
+  const hideToast = useCallback((): void => {
+    setToast({ visible: false, message: '', type: 'success' })
   }, [])
 
-  // ── Navigation ──────────────────────────────────────────────────────
+  // ──────────────────────────────────────────────────────────────────
+  // LOADING STATE
+  // ──────────────────────────────────────────────────────────────────
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  // ──────────────────────────────────────────────────────────────────
+  // NAVIGATION CALLBACKS
+  // ──────────────────────────────────────────────────────────────────
   const goTo = useCallback((tab: TabType): void => {
     setIsAdding(false)
     setActiveTab(tab)
   }, [])
 
-  const openModal  = useCallback((name: ModalType): void => {
+  const openModal = useCallback((name: ModalType): void => {
     setActiveModal(name)
   }, [])
 
@@ -131,21 +215,34 @@ export function AppProvider({ children }: AppProviderProps) {
     setActiveModal(null)
   }, [])
 
-  // ── Context value ───────────────────────────────────────────────────
+  // ──────────────────────────────────────────────────────────────────
+  // CONTEXT VALUE
+  // ──────────────────────────────────────────────────────────────────
   const value: AppContextValue = {
+    // Transactions
     transactions,
     addTransaction,
     deleteTransaction,
+    updateTransaction,
+
+    // Saving Goals
     goals,
     addGoal,
     fundGoal,
+    updateGoal,
     deleteGoal,
+
+    // Settings
     geminiApiKey,
     setGeminiApiKey,
     userName,
     setUserName,
+    theme,
+    setTheme,
     budget,
     setBudget,
+
+    // UI Navigation
     activeTab,
     setActiveTab,
     goTo,
@@ -158,8 +255,15 @@ export function AppProvider({ children }: AppProviderProps) {
     activeModal,
     openModal,
     closeModal,
+
+    // Toast & Feedback
     toast,
     showToast,
+    hideToast,
+
+    // Loading State
+    isLoading,
+    setIsLoading,
   }
 
   return (
@@ -169,10 +273,107 @@ export function AppProvider({ children }: AppProviderProps) {
   )
 }
 
+// ══════════════════════════════════════════════════════════════════════
+// CUSTOM HOOK
+// ══════════════════════════════════════════════════════════════════════
 export function useApp(): AppContextValue {
   const ctx = useContext(AppContext)
   if (ctx === null) {
     throw new Error('useApp harus dipakai di dalam <AppProvider>')
   }
   return ctx
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// HELPER HOOKS (Optional)
+// ══════════════════════════════════════════════════════════════════════
+
+/**
+ * Hook untuk mengakses hanya state transaksi
+ */
+export function useTransactions() {
+  const { transactions, addTransaction, deleteTransaction, updateTransaction } = useApp()
+  return { transactions, addTransaction, deleteTransaction, updateTransaction }
+}
+
+/**
+ * Hook untuk mengakses hanya state goals
+ */
+export function useGoals() {
+  const { goals, addGoal, fundGoal, updateGoal, deleteGoal } = useApp()
+  return { goals, addGoal, fundGoal, updateGoal, deleteGoal }
+}
+
+/**
+ * Hook untuk mengakses hanya state UI
+ */
+export function useUI() {
+  const {
+    activeTab,
+    setActiveTab,
+    goTo,
+    analisisSubTab,
+    setAnalisisSubTab,
+    isAdding,
+    setIsAdding,
+    hideBalance,
+    setHideBalance,
+    activeModal,
+    openModal,
+    closeModal,
+    isLoading,
+    setIsLoading,
+  } = useApp()
+
+  return {
+    activeTab,
+    setActiveTab,
+    goTo,
+    analisisSubTab,
+    setAnalisisSubTab,
+    isAdding,
+    setIsAdding,
+    hideBalance,
+    setHideBalance,
+    activeModal,
+    openModal,
+    closeModal,
+    isLoading,
+    setIsLoading,
+  }
+}
+
+/**
+ * Hook untuk mengakses hanya state settings
+ */
+export function useSettings() {
+  const {
+    userName,
+    setUserName,
+    geminiApiKey,
+    setGeminiApiKey,
+    theme,
+    setTheme,
+    budget,
+    setBudget,
+  } = useApp()
+
+  return {
+    userName,
+    setUserName,
+    geminiApiKey,
+    setGeminiApiKey,
+    theme,
+    setTheme,
+    budget,
+    setBudget,
+  }
+}
+
+/**
+ * Hook untuk toast notifications
+ */
+export function useToast() {
+  const { toast, showToast, hideToast } = useApp()
+  return { toast, showToast, hideToast }
 }
