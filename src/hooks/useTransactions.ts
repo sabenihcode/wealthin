@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useApp } from '../context/AppContext'
 import { DEFAULT_CATEGORY_SPENDING } from '../constants/mockData'
-import type { CategorySpending, FinancialSummary, Transaction } from '../types'
+import type { CategorySpending, FinancialSummary } from '../types'
 
 /**
  * Hook untuk mengelola dan menghitung transaksi
