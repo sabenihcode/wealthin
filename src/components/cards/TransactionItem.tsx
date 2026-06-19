@@ -1,4 +1,4 @@
-import { ChevronRight, Trash2 } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 import { useTransactions } from '../../hooks/useTransactions'
 import { formatIDR } from '../../utils/formatters'
 import type { Transaction } from '../../types'
