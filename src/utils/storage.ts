@@ -1,32 +1,87 @@
 /**
- * Type-safe localStorage wrapper dengan error handling.
+ * Utility functions untuk local storage management
  */
-export function storageGet<T>(key: string, fallback: T): T {
+
+/**
+ * Get value dari localStorage dengan fallback ke default
+ */
+export function storageGet<T>(key: string, defaultValue: T): T {
   try {
-    const raw = localStorage.getItem(key)
-    if (raw === null) return fallback
-    const parsed = JSON.parse(raw) as T
-    return parsed ?? fallback
-  } catch (e) {
-    console.warn(`[storage] Gagal membaca "${key}":`, e)
-    return fallback
+    const item = window.localStorage.getItem(key)
+    return item ? (JSON.parse(item) as T) : defaultValue
+  } catch (error) {
+    console.error(`Error reading localStorage key "${key}":`, error)
+    return defaultValue
   }
 }
 
-export function storageSet<T>(key: string, value: T): boolean {
+/**
+ * Set value ke localStorage
+ */
+export function storageSet<T>(key: string, value: T): void {
   try {
-    localStorage.setItem(key, JSON.stringify(value))
-    return true
-  } catch (e) {
-    console.warn(`[storage] Gagal menyimpan "${key}":`, e)
-    return false
+    window.localStorage.setItem(key, JSON.stringify(value))
+  } catch (error) {
+    console.error(`Error writing to localStorage key "${key}":`, error)
   }
 }
 
+/**
+ * Remove value dari localStorage
+ */
 export function storageRemove(key: string): void {
   try {
-    localStorage.removeItem(key)
-  } catch (e) {
-    console.warn(`[storage] Gagal menghapus "${key}":`, e)
+    window.localStorage.removeItem(key)
+  } catch (error) {
+    console.error(`Error removing localStorage key "${key}":`, error)
+  }
+}
+
+/**
+ * Clear semua localStorage
+ */
+export function storageClear(): void {
+  try {
+    window.localStorage.clear()
+  } catch (error) {
+    console.error('Error clearing localStorage:', error)
+  }
+}
+
+/**
+ * Get all keys from localStorage
+ */
+export function storageKeys(): string[] {
+  try {
+    return Object.keys(window.localStorage)
+  } catch (error) {
+    console.error('Error getting localStorage keys:', error)
+    return []
+  }
+}
+
+/**
+ * Export all data
+ */
+export function storageExport(): Record<string, unknown> {
+  try {
+    const data: Record<string, unknown> = {}
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const key = window.localStorage.key(i)
+      if (key) {
+        const item = window.localStorage.getItem(key)
+        if (item) {
+          try {
+            data[key] = JSON.parse(item)
+          } catch {
+            data[key] = item
+          }
+        }
+      }
+    }
+    return data
+  } catch (error) {
+    console.error('Error exporting localStorage:', error)
+    return {}
   }
 }
