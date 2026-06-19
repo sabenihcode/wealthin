@@ -42,7 +42,7 @@ export type CategoryName =
   | 'Lainnya'
 
 export type CategoriesConfig = Record<CategoryName, CategoryConfig>
-export type CategorySpending = Record<CategoryName, number>
+export type CategorySpending = Partial<Record<CategoryName, number>>
 
 // ══════════════════════════════════════════════════════════════════════
 // GOAL TYPES
@@ -75,6 +75,29 @@ export interface DailyTrend {
   inflow: number
   outflow: number
   net: number
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// CHART TYPES
+// ══════════════════════════════════════════════════════════════════════
+
+export interface DonutSegment {
+  color: string
+  percentage: number
+  offset: number
+  label: string
+}
+
+export interface ChartSegment {
+  color: string
+  percentage: number
+  offset: number
+  label: string
+}
+
+export interface GridLine {
+  top: number
+  label: string
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -119,7 +142,7 @@ export interface Notification {
   id: string
   title: string
   message: string
-  type: 'success' | 'warning' | 'error' | 'info'
+  type: ToastType
   timestamp: number
   read: boolean
 }
@@ -183,18 +206,6 @@ export interface NavItem {
   label: string | null
   Icon: LucideIcon
   isFAB?: boolean
-}
-
-export interface ChartSegment {
-  color: string
-  percentage: number
-  offset: number
-  label: string
-}
-
-export interface GridLine {
-  top: number
-  label: string
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -269,7 +280,7 @@ export interface AppContextValue {
 
   // ─── Toast & Feedback ───────────────────────────────────────────
   toast: ToastState
-  showToast: (message: string, type?: ToastType) => void | (() => void)
+  showToast: (message: string, type?: ToastType) => void
   hideToast: () => void
 
   // ─── Loading State ──────────────────────────────────────────────
