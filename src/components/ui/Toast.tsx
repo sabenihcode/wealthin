@@ -1,16 +1,19 @@
 import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react'
 import { useApp } from '../../context/AppContext'
-
-type ToastType = 'success' | 'error' | 'info'
+import type { ToastType } from '../../types'
 
 export function Toast(): JSX.Element | null {
   const { toast, hideToast } = useApp()
-  
+
   if (!toast.visible) return null
 
   const type: ToastType = toast.type || 'success'
 
-  const config = {
+  const config: Record<ToastType, {
+    Icon: typeof CheckCircle2
+    bgClass: string
+    iconClass: string
+  }> = {
     success: {
       Icon: CheckCircle2,
       bgClass: 'bg-sage-500/10 border-sage-500/20',
@@ -26,6 +29,11 @@ export function Toast(): JSX.Element | null {
       bgClass: 'bg-cyan-500/10 border-cyan-500/20',
       iconClass: 'text-cyan-400 bg-cyan-500/10',
     },
+    warning: {
+      Icon: AlertCircle,
+      bgClass: 'bg-amber-500/10 border-amber-500/20',
+      iconClass: 'text-amber-400 bg-amber-500/10',
+    },
   }
 
   const { Icon, bgClass, iconClass } = config[type]
@@ -37,7 +45,7 @@ export function Toast(): JSX.Element | null {
                       rounded-2xl shadow-2xl flex items-center gap-3 
                       p-4 max-w-md w-full pointer-events-auto
                       animate-slide-down`}>
-        
+
         {/* Icon */}
         <div className={`w-9 h-9 ${iconClass} rounded-xl 
                         flex items-center justify-center shrink-0`}>
