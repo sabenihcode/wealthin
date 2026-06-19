@@ -45,17 +45,17 @@ export function AnalisisPage(): JSX.Element {
       label:   'Pengeluaran',
       value:   totalPengeluaran,
       Icon:    ArrowDownRight,
-      iconBg:  'bg-blue-500/10 text-blue-400',
+      iconBg:  'bg-rose-500/10 text-rose-400',
       badge:   '↓ 5.2%',
-      badgeBg: 'text-blue-400 bg-blue-500/10',
+      badgeBg: 'text-rose-400 bg-rose-500/10',
     },
     {
       label:   'Cashflow',
       value:   saldoBersih,
       Icon:    BarChart2,
-      iconBg:  'bg-fuchsia-500/10 text-fuchsia-400',
+      iconBg:  'bg-sage-500/10 text-sage-400',
       badge:   '↑ 15.3%',
-      badgeBg: 'text-fuchsia-400 bg-fuchsia-500/10',
+      badgeBg: 'text-sage-400 bg-sage-500/10',
     },
   ]
 
@@ -80,10 +80,9 @@ export function AnalisisPage(): JSX.Element {
                            text-slate-300 text-xs font-bold px-3 py-2
                            rounded-2xl border border-slate-800
                            hover:bg-slate-800 transition-colors">
-          <Calendar className="w-4 h-4 text-fuchsia-400" />
+          <Calendar className="w-4 h-4 text-sage-400" />
           <span>Bulan ini</span>
-          <ChevronRight className="w-3.5 h-3.5 rotate-90
-                                   text-slate-600" />
+          <ChevronRight className="w-3.5 h-3.5 rotate-90 text-slate-600" />
         </button>
       </div>
 
@@ -97,14 +96,14 @@ export function AnalisisPage(): JSX.Element {
             className={`px-4 py-2.5 text-xs font-bold transition-all
                         relative shrink-0 focus:outline-none
               ${analisisSubTab === tab
-                ? 'text-fuchsia-400'
+                ? 'text-sage-400'
                 : 'text-slate-500 hover:text-slate-300'}`}
           >
             {tab}
             {analisisSubTab === tab && (
               <span className="absolute bottom-0 left-4 right-4
-                               h-0.5 bg-fuchsia-400 rounded-full
-                               animate-fade-in" />
+                               h-0.5 bg-sage-500 rounded-full
+                               animate-fade-in shadow-lg shadow-sage-500/50" />
             )}
           </button>
         ))}
@@ -126,7 +125,7 @@ export function AnalisisPage(): JSX.Element {
               {(
                 [
                   { label: 'Pemasukan',   value: totalPemasukan,   color: 'text-emerald-400', dot: 'bg-emerald-400' },
-                  { label: 'Pengeluaran', value: totalPengeluaran, color: 'text-blue-400',    dot: 'bg-blue-400'    },
+                  { label: 'Pengeluaran', value: totalPengeluaran, color: 'text-rose-400',    dot: 'bg-rose-400'    },
                 ] as const
               ).map(({ label, value, color, dot }, i) => (
                 <div key={label} className={`space-y-1 ${i === 1 ? 'pl-4' : ''}`}>
@@ -148,7 +147,7 @@ export function AnalisisPage(): JSX.Element {
                 Cashflow bulan ini
               </span>
               <div className="flex items-center gap-1 text-xs
-                              font-extrabold text-fuchsia-400">
+                              font-extrabold text-sage-400">
                 {formatIDR(saldoBersih)}
                 <ChevronRight className="w-4 h-4" />
               </div>
@@ -218,7 +217,7 @@ export function AnalisisPage(): JSX.Element {
           {/* Insight */}
           <div className="bg-slate-900 rounded-3xl p-4 border border-slate-800
                           shadow-lg shadow-black/10 flex items-start gap-3.5">
-            <div className="w-10 h-10 bg-fuchsia-500/10 text-fuchsia-400
+            <div className="w-10 h-10 bg-sage-500/10 text-sage-400
                             rounded-2xl flex items-center
                             justify-center shrink-0">
               <Lightbulb className="w-5 h-5" />
@@ -230,7 +229,7 @@ export function AnalisisPage(): JSX.Element {
               <p className="text-xs text-slate-400 font-medium
                             leading-relaxed">
                 Pengeluaran Makan &amp; Minum{' '}
-                <span className="text-fuchsia-400 font-extrabold">
+                <span className="text-sage-400 font-extrabold">
                   naik 12%
                 </span>{' '}
                 dibanding bulan lalu.
@@ -245,7 +244,7 @@ export function AnalisisPage(): JSX.Element {
       {analisisSubTab !== 'Ringkasan' && (
         <div className="bg-slate-900 rounded-3xl p-8 border border-slate-800
                         shadow-lg shadow-black/10 text-center space-y-3 animate-fade-in">
-          <Sparkles className="w-8 h-8 text-fuchsia-400 mx-auto" />
+          <Sparkles className="w-8 h-8 text-sage-400 mx-auto" />
           <div>
             <h3 className="text-sm font-bold text-white">
               Detail {analisisSubTab}
@@ -256,9 +255,9 @@ export function AnalisisPage(): JSX.Element {
           </div>
           <button
             onClick={() => setAnalisisSubTab('Ringkasan')}
-            className="text-xs bg-fuchsia-500/10 text-fuchsia-400
+            className="text-xs bg-sage-500/10 text-sage-400
                        px-4 py-2 rounded-xl font-bold
-                       hover:bg-fuchsia-500/20 transition-colors"
+                       hover:bg-sage-500/20 transition-colors"
           >
             Kembali ke Ringkasan
           </button>
