@@ -1,89 +1,115 @@
-import { formatIDR } from '../../utils/formatters'
+import { useMemo } from 'react'
 import { CATEGORIES_CONFIG } from '../../constants/categories'
-import type { CategorySpending, DonutSegment } from '../../types'
+import { formatIDR } from '../../utils/formatters'
+import type { CategoryName, DonutSegment } from '../../types'
 
 interface DonutChartProps {
-  total:           number
-  categorySpending: CategorySpending
+  total: number
+  categorySpending: Record<CategoryName, number>
 }
 
-const SEGMENTS: DonutSegment[] = [
-  { color: '#0062FF', pct: 29, offset: 0   },
-  { color: '#38BDF8', pct: 21, offset: -29  },
-  { color: '#A855F7', pct: 14, offset: -50  },
-  { color: '#F43F5E', pct: 9,  offset: -64  },
-  { color: '#F59E0B', pct: 9,  offset: -73  },
-  { color: '#10B981', pct: 18, offset: -82  },
+const CHART_COLORS = [
+  '#87A96B', // sage-500
+  '#10B981', // emerald-500
+  '#F59E0B', // amber-500
+  '#F43F5E', // rose-500
+  '#06B6D4', // cyan-500
+  '#8B5CF6', // violet-500
+  '#64748B', // slate-500
 ]
 
-export function DonutChart(
-  { total, categorySpending }: DonutChartProps
-): JSX.Element {
+export function DonutChart({ total, categorySpending }: DonutChartProps): JSX.Element {
+  const data = useMemo(() => {
+    return (Object.entries(categorySpending) as [CategoryName, number][])
+      .map(([name, amount], idx) => ({
+        name: name as CategoryName,
+        amount,
+        percentage: total > 0 ? (amount / total) * 100 : 0,
+        color: CHART_COLORS[idx % CHART_COLORS.length],
+      }))
+      .sort((a, b) => b.amount - a.amount)
+      .slice(0, 6)
+  }, [categorySpending, total])
+
+  const radius = 70
+  const strokeWidth = 20
+  const center = 90
+  const circumference = 2 * Math.PI * radius
+
+  let accumulatedPercentage = 0
+
   return (
-    <div className="flex flex-col sm:flex-row items-center gap-6">
+    <div className="space-y-4">
       {/* SVG Donut */}
-      <div className="relative w-36 h-36 shrink-0
-                      flex items-center justify-center">
-        <svg className="w-full h-full -rotate-90"
-             viewBox="0 0 36 36">
-          {SEGMENTS.map(({ color, pct, offset }, i) => (
+      <div className="flex justify-center">
+        <div className="relative">
+          <svg width="180" height="180" className="transform -rotate-90">
+            {/* Background circle */}
             <circle
-              key={i}
-              cx="18" cy="18" r="15.915"
+              cx={center}
+              cy={center}
+              r={radius}
               fill="none"
-              stroke={color}
-              strokeWidth="4"
-              strokeDasharray={`${pct} ${100 - pct}`}
-              strokeDashoffset={offset}
-              className="transition-all duration-1000
-                         cursor-pointer hover:stroke-[5px]"
+              stroke="#1E293B"
+              strokeWidth={strokeWidth}
             />
-          ))}
-        </svg>
-        {/* Center label */}
-        <div className="absolute text-center">
-          <span className="text-[9px] text-slate-400
-                           font-extrabold uppercase">
-            Total
-          </span>
-          <p className="text-xs font-extrabold text-slate-800
-                        tracking-tight mt-0.5">
-            {formatIDR(total)}
-          </p>
+
+            {/* Data segments */}
+            {data.map((item, idx) => {
+              const segmentLength = (item.percentage / 100) * circumference
+              const offset = circumference - (accumulatedPercentage / 100) * circumference
+              accumulatedPercentage += item.percentage
+
+              return (
+                <circle
+                  key={idx}
+                  cx={center}
+                  cy={center}
+                  r={radius}
+                  fill="none"
+                  stroke={item.color}
+                  strokeWidth={strokeWidth}
+                  strokeDasharray={`${segmentLength} ${circumference}`}
+                  strokeDashoffset={-offset}
+                  className="transition-all duration-700"
+                />
+              )
+            })}
+          </svg>
+
+          {/* Center text */}
+          <div className="absolute inset-0 flex flex-col items-center 
+                          justify-center text-center">
+            <p className="text-xs text-slate-500 font-bold">Total</p>
+            <p className="text-lg font-extrabold text-white">
+              {formatIDR(total)}
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Legend */}
-      <div className="flex-1 w-full space-y-2 text-xs">
-        {(Object.entries(categorySpending) as [
-          keyof typeof categorySpending, number
-        ][]).map(([cat, amount]) => {
-          const cfg = CATEGORIES_CONFIG[cat]
-                   ?? CATEGORIES_CONFIG['Lainnya']
-          const pct = Math.round((amount / total) * 100) || 0
+      <div className="grid grid-cols-2 gap-3">
+        {data.map((item) => {
+          const cfg = CATEGORIES_CONFIG[item.name]
+          const Icon = cfg?.icon
 
           return (
-            <div key={cat}
-                 className="flex items-center justify-between
-                            font-bold text-slate-700">
-              <div className="flex items-center gap-2">
-                <span
-                  className="w-2.5 h-2.5 rounded-full shrink-0"
-                  style={{ backgroundColor: cfg.fill }}
-                />
-                <span className="text-slate-600 font-semibold
-                                 truncate max-w-[100px]">
-                  {cat}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-slate-800">
-                  {formatIDR(amount)}
-                </span>
-                <span className="text-blue-500 font-extrabold
-                                 text-[10px] w-6 text-right">
-                  {pct}%
-                </span>
+            <div key={item.name} className="flex items-center gap-2">
+              <div
+                className="w-3 h-3 rounded-full shrink-0"
+                style={{ backgroundColor: item.color }}
+              />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1">
+                  {Icon && <Icon className="w-3 h-3 text-slate-500" />}
+                  <span className="text-[10px] text-slate-400 font-bold truncate">
+                    {item.name}
+                  </span>
+                </div>
+                <p className="text-xs font-extrabold text-white">
+                  {Math.round(item.percentage)}%
+                </p>
               </div>
             </div>
           )
