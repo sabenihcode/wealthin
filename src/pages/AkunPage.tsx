@@ -7,7 +7,6 @@ import {
   Upload,
   KeyRound,
   Eye,
-  EyeOff,
   Trash,
 } from 'lucide-react'
 import { useRef, useState } from 'react'
@@ -303,7 +302,7 @@ export function AkunPage(): JSX.Element {
                            text-slate-600 hover:text-slate-400 transition-colors"
               >
                 {showKey ? (
-                  <Eye className="w-4 h-4" />
+                  <Eye className="w-4 h-4 line-through" />
                 ) : (
                   <Eye className="w-4 h-4" />
                 )}
