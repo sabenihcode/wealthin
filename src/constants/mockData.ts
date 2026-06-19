@@ -5,7 +5,7 @@ import type { Transaction, CategorySpending, MonthlyTrend } from '../types'
 // ══════════════════════════════════════════════════════════════════════
 
 export const STORAGE_KEY = 'wealthvibe_transactions'
-export const DEFAULT_BUDGET = 5000000
+export const DEFAULT_BUDGET = 0
 
 // ══════════════════════════════════════════════════════════════════════
 // DEFAULT TRANSACTIONS
@@ -18,13 +18,13 @@ export const DEFAULT_TRANSACTIONS: Transaction[] = []
 // ══════════════════════════════════════════════════════════════════════
 
 export const DEFAULT_CATEGORY_SPENDING: CategorySpending = {
-  'Makan & Minum': 35000,
-  'Transportasi': 100000,
-  'Belanja': 250000,
-  'Kesehatan': 150000,
-  'Hiburan': 60000,
-  'Pendidikan': 200000,
-  'Tagihan': 50000,
+  'Makan & Minum': 0,
+  'Transportasi': 0,
+  'Belanja': 0,
+  'Kesehatan': 0,
+  'Hiburan': 0,
+  'Pendidikan': 0,
+  'Tagihan': 0,
   'Lainnya': 0,
 }
 
@@ -57,11 +57,6 @@ export const PAYMENT_OPTIONS = [
 // ══════════════════════════════════════════════════════════════════════
 
 export const MONTHLY_TRENDS: MonthlyTrend[] = [
-  { label: 'Jan', inflow: 5000000, outflow: 3500000, date: '2024-01-01' },
-  { label: 'Feb', inflow: 5500000, outflow: 4000000, date: '2024-02-01' },
-  { label: 'Mar', inflow: 6000000, outflow: 4200000, date: '2024-03-01' },
-  { label: 'Apr', inflow: 5800000, outflow: 4500000, date: '2024-04-01' },
-  { label: 'Mei', inflow: 6200000, outflow: 4000000, date: '2024-05-01' },
   { label: 'Jun', inflow: 6500000, outflow: 4300000, date: '2024-06-01' },
 ]
 
@@ -87,32 +82,7 @@ export const NOTIFICATION_TEMPLATES = {
 // DEMO / TUTORIAL DATA
 // ══════════════════════════════════════════════════════════════════════
 
-export const DEMO_GOALS = [
-  {
-    id: 'demo-1',
-    name: 'Liburan ke Bali',
-    emoji: '✈️',
-    targetAmount: 5000000,
-    currentAmount: 2500000,
-    deadline: '2024-06-30',
-  },
-  {
-    id: 'demo-2',
-    name: 'Beli Laptop Baru',
-    emoji: '💻',
-    targetAmount: 10000000,
-    currentAmount: 7000000,
-    deadline: '2024-08-31',
-  },
-  {
-    id: 'demo-3',
-    name: 'Emergency Fund',
-    emoji: '🏦',
-    targetAmount: 20000000,
-    currentAmount: 15000000,
-    deadline: '2024-12-31',
-  },
-]
+export const DEMO_GOALS = []
 
 // ══════════════════════════════════════════════════════════════════════
 // VALIDATION CONSTANTS
