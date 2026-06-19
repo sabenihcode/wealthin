@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { CATEGORIES_CONFIG } from '../../constants/categories'
 import { formatIDR } from '../../utils/formatters'
-import type { CategoryName, DonutSegment } from '../../types'
+import type { CategoryName } from '../../types'
 
 interface DonutChartProps {
   total: number
