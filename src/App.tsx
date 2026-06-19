@@ -8,69 +8,66 @@ import { TambahPage }   from './pages/TambahPage'
 import { AnalisisPage } from './pages/AnalisisPage'
 import { AkunPage }     from './pages/AkunPage'
 
-const GLOBAL_CSS = `
-  @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.98) translateY(4px); }
-    to   { opacity: 1; transform: scale(1)    translateY(0);   }
-  }
-  @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to   { transform: translateY(0);    }
-  }
-  .animate-fade-in  {
-    animation: fadeIn  0.35s cubic-bezier(0.16,1,0.3,1) forwards;
-  }
-  .animate-slide-up {
-    animation: slideUp 0.40s cubic-bezier(0.16,1,0.3,1) forwards;
-  }
-  .scrollbar-none::-webkit-scrollbar { display: none; }
-  .scrollbar-none {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-` as const
-
-// ── Router ─────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════
+// ROUTER COMPONENT
+// ══════════════════════════════════════════════════════════════════════
 function Router(): JSX.Element {
   const { activeTab, isAdding } = useApp()
 
-  if (isAdding || activeTab === 'tambah') return <TambahPage />
+  // Priority: Tambah page
+  if (isAdding || activeTab === 'tambah') {
+    return <TambahPage />
+  }
 
-  return (
-    <>
-      {activeTab === 'beranda'  && <BerandaPage />}
-      {activeTab === 'transaksi'  && <TransaksiPage />}
-      {activeTab === 'analisis' && <AnalisisPage />}
-      {activeTab === 'akun'     && <AkunPage />}
-    </>
-  )
+  // Route switching
+  switch (activeTab) {
+    case 'beranda':
+      return <BerandaPage />
+    case 'transaksi':
+      return <TransaksiPage />
+    case 'analisis':
+      return <AnalisisPage />
+    case 'akun':
+      return <AkunPage />
+    default:
+      return <BerandaPage />
+  }
 }
 
-// ── Root ───────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════
+// MAIN APP COMPONENT
+// ══════════════════════════════════════════════════════════════════════
 export default function App(): JSX.Element {
   return (
     <AppProvider>
-      <style>{GLOBAL_CSS}</style>
-
-      <div className="min-h-screen bg-slate-900 md:py-8
-                      flex justify-center items-center
-                      font-sans selection:bg-blue-100">
+      {/* Mobile/Desktop Container */}
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 
+                      md:py-8 flex justify-center items-center font-sans">
+        
+        {/* App Frame */}
         <div className="w-full max-w-md bg-slate-950 text-white min-h-screen
                         md:min-h-[880px] md:max-h-[920px]
-                        md:rounded-[48px] md:shadow-2xl relative
-                        flex flex-col overflow-hidden
-                        border border-slate-200/40">
-          {/* Fixed top */}
+                        md:rounded-[48px] md:shadow-2xl 
+                        md:shadow-sage-500/5 md:border md:border-slate-800/50
+                        relative flex flex-col overflow-hidden">
+          
+          {/* Decorative gradient overlay (desktop only) */}
+          <div className="hidden md:block absolute inset-0 pointer-events-none">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-32 
+                            bg-gradient-to-b from-sage-500/5 to-transparent blur-2xl" />
+          </div>
+
+          {/* Fixed overlays */}
           <Toast />
           <AllModals />
 
-          {/* Scrollable content */}
-          <div className="flex-1 overflow-y-auto pb-24 px-5
-                          scrollbar-none">
+          {/* Main scrollable content */}
+          <main className="flex-1 overflow-y-auto pb-24 px-5 scrollbar-none
+                          relative z-10">
             <Router />
-          </div>
+          </main>
 
-          {/* Fixed bottom */}
+          {/* Fixed bottom navigation */}
           <BottomNav />
         </div>
       </div>
