@@ -1,13 +1,13 @@
 import { useMemo } from 'react'
 import { useApp } from '../context/AppContext'
 import { DEFAULT_CATEGORY_SPENDING } from '../constants/mockData'
-import type { CategorySpending, FinancialSummary } from '../types'
+import type { CategorySpending, FinancialSummary, Transaction } from '../types'
 
 /**
  * Hook untuk mengelola dan menghitung transaksi
  */
 export function useTransactions() {
-  const { transactions } = useApp()
+  const { transactions, addTransaction, deleteTransaction, updateTransaction } = useApp()
 
   const summary = useMemo<FinancialSummary>(() => {
     const summary: FinancialSummary = {
@@ -47,6 +47,9 @@ export function useTransactions() {
 
   return {
     transactions,
+    addTransaction,
+    deleteTransaction,
+    updateTransaction,
     totalPemasukan: summary.totalPemasukan,
     totalPengeluaran: summary.totalPengeluaran,
     saldoBersih: summary.saldoBersih,
