@@ -1,3 +1,4 @@
+
 import { useState } from 'react'
 import { ArrowLeft, Calendar, CreditCard, Camera, ChevronRight } from 'lucide-react'
 import { useApp }          from '../context/AppContext'
@@ -71,7 +72,12 @@ export function TambahPage(): JSX.Element {
       
       {/* Header */}
       <div className="flex justify-between items-center mt-2">
-        <button onClick={goBack} className="w-10 h-10 bg-slate-900 border border-slate-800 rounded-full flex items-center justify-center transition-colors">
+        <button 
+          onClick={goBack} 
+          className="w-10 h-10 bg-slate-900 border border-slate-800 
+                     rounded-full flex items-center justify-center 
+                     hover:bg-slate-800 transition-colors"
+        >
           <ArrowLeft className="w-5 h-5 text-slate-300" />
         </button>
         <div className="text-center">
@@ -87,7 +93,10 @@ export function TambahPage(): JSX.Element {
           <button
             key={t}
             onClick={() => setType(t)}
-            className={`flex-1 py-3 rounded-xl text-xs font-bold transition-all ${type === t ? 'bg-slate-800 text-fuchsia-400' : 'text-slate-500'}`}
+            className={`flex-1 py-3 rounded-xl text-xs font-bold transition-all 
+              ${type === t 
+                ? 'bg-slate-800 text-sage-400 shadow-lg shadow-sage-500/10' 
+                : 'text-slate-500 hover:text-slate-300'}`}
           >
             {t === 'pengeluaran' ? '↓ Pengeluaran' : '↑ Pemasukan'}
           </button>
@@ -97,19 +106,27 @@ export function TambahPage(): JSX.Element {
       {/* Amount */}
       <div className="bg-slate-900 rounded-3xl p-5 border border-slate-800 shadow-lg space-y-4">
         <span className="text-xs font-extrabold text-white">Jumlah</span>
-        <div className="text-3xl font-extrabold text-fuchsia-400 flex items-center">
+        <div className="text-3xl font-extrabold text-sage-400 flex items-center">
           <span className="mr-1.5">Rp</span>
           <input
             type="number"
             value={amount === 0 ? '' : amount}
             onChange={e => setAmount(Number(e.target.value))}
             placeholder="0"
-            className="w-full bg-transparent focus:outline-none placeholder-slate-700 text-3xl font-extrabold p-0"
+            className="w-full bg-transparent focus:outline-none 
+                       placeholder-slate-700 text-3xl font-extrabold p-0"
           />
         </div>
         <div className="grid grid-cols-4 gap-2">
           {QUICK_AMOUNTS.map(val => (
-            <button key={val} onClick={() => setAmount(prev => prev + val)} className="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl border border-slate-700">
+            <button 
+              key={val} 
+              onClick={() => setAmount(prev => prev + val)} 
+              className="py-2.5 bg-slate-800 hover:bg-slate-700 
+                         text-slate-300 text-xs font-bold rounded-xl 
+                         border border-slate-700 transition-colors 
+                         active:scale-95"
+            >
               +{val.toLocaleString('id-ID')}
             </button>
           ))}
@@ -118,17 +135,28 @@ export function TambahPage(): JSX.Element {
 
       {/* Category (Hanya jika Pengeluaran) */}
       {type === 'pengeluaran' && (
-        <div className="bg-slate-900 rounded-3xl p-5 border border-slate-800 shadow-lg space-y-4 animate-fade-in">
+        <div className="bg-slate-900 rounded-3xl p-5 border border-slate-800 
+                        shadow-lg space-y-4 animate-fade-in">
           <span className="text-xs font-extrabold text-white block mb-3">Kategori</span>
           <div className="grid grid-cols-6 gap-2">
             {(Object.entries(CATEGORIES_CONFIG) as [CategoryName, typeof CATEGORIES_CONFIG[CategoryName]][]).map(([name, cfg]) => {
               const sel = cat === name
               return (
-                <button key={name} onClick={() => setCat(name)} className="flex flex-col items-center gap-1.5">
-                  <div className={`w-11 h-11 rounded-full flex items-center justify-center border-2 transition-all ${sel ? 'bg-fuchsia-500 border-fuchsia-500 text-white' : 'bg-slate-800 border-transparent text-slate-400'}`}>
+                <button 
+                  key={name} 
+                  onClick={() => setCat(name)} 
+                  className="flex flex-col items-center gap-1.5"
+                >
+                  <div className={`w-11 h-11 rounded-full flex items-center 
+                                  justify-center border-2 transition-all 
+                    ${sel 
+                      ? 'bg-sage-500 border-sage-500 text-white shadow-lg shadow-sage-500/30' 
+                      : 'bg-slate-800 border-transparent text-slate-400 hover:border-slate-700'}`}
+                  >
                     <cfg.icon className="w-5 h-5" />
                   </div>
-                  <span className={`text-[9px] font-bold truncate w-full text-center ${sel ? 'text-fuchsia-400' : 'text-slate-500'}`}>
+                  <span className={`text-[9px] font-bold truncate w-full text-center 
+                    ${sel ? 'text-sage-400' : 'text-slate-500'}`}>
                     {name.split(' ')[0]}
                   </span>
                 </button>
@@ -141,8 +169,12 @@ export function TambahPage(): JSX.Element {
       {/* Details: Tanggal & Pembayaran */}
       <div className="bg-slate-900 rounded-3xl p-5 border border-slate-800 shadow-lg space-y-4">
         <div className="space-y-2">
-          <label htmlFor="tx-date" className="text-xs font-extrabold text-white">Tanggal</label>
-          <div className="flex items-center justify-between bg-slate-950 rounded-2xl p-3 border border-slate-800">
+          <label htmlFor="tx-date" className="text-xs font-extrabold text-white">
+            Tanggal
+          </label>
+          <div className="flex items-center justify-between bg-slate-950 
+                          rounded-2xl p-3 border border-slate-800 
+                          focus-within:border-sage-500/50 transition-colors">
             <div className="flex items-center gap-2.5">
               <Calendar className="w-4 h-4 text-slate-500" />
               <input
@@ -150,7 +182,8 @@ export function TambahPage(): JSX.Element {
                 type="date"
                 value={date}
                 onChange={e => setDate(e.target.value)}
-                className="bg-transparent focus:outline-none font-bold text-slate-300 text-xs"
+                className="bg-transparent focus:outline-none font-bold 
+                           text-slate-300 text-xs"
                 style={{ colorScheme: 'dark' }}
               />
             </div>
@@ -159,20 +192,28 @@ export function TambahPage(): JSX.Element {
 
         {type === 'pengeluaran' && (
           <div className="space-y-2 animate-fade-in">
-            <label htmlFor="tx-payment" className="text-xs font-extrabold text-white">Metode Pembayaran</label>
+            <label htmlFor="tx-payment" className="text-xs font-extrabold text-white">
+              Metode Pembayaran
+            </label>
             <div className="relative">
-              <div className="flex items-center gap-2.5 bg-slate-950 border border-slate-800 rounded-2xl p-3">
+              <div className="flex items-center gap-2.5 bg-slate-950 
+                              border border-slate-800 rounded-2xl p-3
+                              focus-within:border-sage-500/50 transition-colors">
                 <CreditCard className="w-4 h-4 text-slate-500" />
                 <select
                   id="tx-payment"
                   value={payment}
                   onChange={e => setPayment(e.target.value)}
-                  className="w-full bg-transparent text-slate-300 font-bold text-xs focus:outline-none cursor-pointer"
+                  className="w-full bg-transparent text-slate-300 font-bold 
+                             text-xs focus:outline-none cursor-pointer"
                 >
-                  {PAYMENT_OPTIONS.map(o => <option key={o} value={o} className="bg-slate-900">{o}</option>)}
+                  {PAYMENT_OPTIONS.map(o => (
+                    <option key={o} value={o} className="bg-slate-900">{o}</option>
+                  ))}
                 </select>
               </div>
-              <ChevronRight className="w-4 h-4 text-slate-600 absolute right-3 top-3.5 rotate-90 pointer-events-none" />
+              <ChevronRight className="w-4 h-4 text-slate-600 absolute 
+                                       right-3 top-3.5 rotate-90 pointer-events-none" />
             </div>
           </div>
         )}
@@ -180,32 +221,44 @@ export function TambahPage(): JSX.Element {
 
       {/* Catatan */}
       <div className="bg-slate-900 rounded-3xl p-5 border border-slate-800 shadow-lg space-y-2">
-        <label htmlFor="tx-note" className="text-xs font-extrabold text-white">Catatan <span className="text-slate-500 font-normal">(Opsional)</span></label>
+        <label htmlFor="tx-note" className="text-xs font-extrabold text-white">
+          Catatan <span className="text-slate-500 font-normal">(Opsional)</span>
+        </label>
         <textarea
           id="tx-note"
           value={note}
           onChange={e => setNote(e.target.value.slice(0, 100))}
           placeholder="Tulis catatan..."
           rows={3}
-          className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-3 text-xs font-semibold text-slate-300 placeholder-slate-600 focus:outline-none focus:border-fuchsia-500/50 resize-none"
+          className="w-full bg-slate-950 border border-slate-800 rounded-2xl 
+                     p-3 text-xs font-semibold text-slate-300 
+                     placeholder-slate-600 focus:outline-none 
+                     focus:border-sage-500/50 focus:ring-2 
+                     focus:ring-sage-500/20 resize-none transition-all"
         />
       </div>
 
       {/* Upload Bukti */}
       <div className="bg-slate-900 rounded-3xl p-5 border border-slate-800 shadow-lg space-y-2">
-        <span className="text-xs font-extrabold text-white block">Tambah Bukti <span className="text-slate-500 font-normal">(Opsional)</span></span>
-        <label className="border-2 border-dashed border-slate-700 hover:border-fuchsia-500/50 rounded-2xl p-5 flex flex-col items-center justify-center gap-3 cursor-pointer hover:bg-fuchsia-500/5 transition-all">
+        <span className="text-xs font-extrabold text-white block">
+          Tambah Bukti <span className="text-slate-500 font-normal">(Opsional)</span>
+        </span>
+        <label className="border-2 border-dashed border-slate-700 
+                          hover:border-sage-500/50 rounded-2xl p-5 
+                          flex flex-col items-center justify-center gap-3 
+                          cursor-pointer hover:bg-sage-500/5 transition-all">
           <input
             type="file"
             accept="image/*"
             onChange={handleFile}
             className="hidden"
           />
-          <div className="w-10 h-10 bg-fuchsia-500/10 text-fuchsia-400 rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 bg-sage-500/10 text-sage-400 
+                          rounded-xl flex items-center justify-center">
             <Camera className="w-5 h-5" />
           </div>
           <div className="text-center">
-            <p className="text-xs font-extrabold text-fuchsia-400">
+            <p className="text-xs font-extrabold text-sage-400">
               {receipt ?? 'Tambah foto struk atau bukti'}
             </p>
           </div>
@@ -215,7 +268,11 @@ export function TambahPage(): JSX.Element {
       {/* Submit */}
       <button
         onClick={handleSave}
-        className="w-full bg-gradient-to-r from-fuchsia-500 to-blue-500 text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 transition-all"
+        className="w-full bg-gradient-to-r from-sage-500 to-emerald-500 
+                   text-white font-bold py-4 rounded-2xl shadow-lg 
+                   shadow-sage-500/20 hover:shadow-sage-500/30 
+                   hover:from-sage-600 hover:to-emerald-600 
+                   active:scale-95 transition-all"
       >
         Simpan Transaksi
       </button>
