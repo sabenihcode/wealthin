@@ -7,7 +7,7 @@
   "author": "Your Name",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "type-check": "tsc --noEmit",
     "lint": "eslint . --ext ts,tsx || true"
@@ -27,7 +27,7 @@
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.9.3",
-    "vite": "^5.3.1",
+    "vite": "^6.0.0",
     "vite-plugin-pwa": "^0.20.1"
   },
   "keywords": [
